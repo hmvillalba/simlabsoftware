@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RetroOS 3.0 - Laboratorio de Diagnóstico y Evaluación</title>
+    <meta name="author" content="Hugo Martín Villalba">
+    <meta name="copyright" content="© Hugo Martín Villalba. Licencia MIT.">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome icons -->
@@ -94,6 +96,11 @@
         <span class="text-[11px] font-bold drop-shadow-[1px_1px_1px_rgba(0,0,0,1)] bg-black/20 group-hover:bg-blue-800 px-1 rounded">Manual / Ayuda</span>
     </div>
 
+    <div onclick="openAboutModal()" class="desktop-icon flex flex-col items-center justify-center w-20 h-20 p-1 rounded hover:bg-white/20 cursor-pointer text-white text-center group">
+        <i class="fa-solid fa-circle-info text-3xl mb-1 text-sky-300 drop-shadow-[1px_1px_1px_#000]"></i>
+        <span class="text-[11px] font-bold drop-shadow-[1px_1px_1px_rgba(0,0,0,1)] bg-black/20 group-hover:bg-blue-800 px-1 rounded">Acerca de...</span>
+    </div>
+
     <div id="desktop-icon-teacher" onclick="openTeacherAuthModal()" class="desktop-icon flex flex-col items-center justify-center w-20 h-20 p-1 rounded hover:bg-white/20 cursor-pointer text-white text-center group">
         <i class="fa-solid fa-user-graduate text-3xl mb-1 text-yellow-400 drop-shadow-[1px_1px_1px_#000]"></i>
         <span class="text-[11px] font-bold drop-shadow-[1px_1px_1px_rgba(0,0,0,1)] bg-black/20 group-hover:bg-blue-800 px-1 rounded">Panel Docente</span>
@@ -163,6 +170,47 @@
         </div>
         <div class="w-full bg-gray-300 h-3 border border-gray-500 overflow-hidden rounded-sm">
             <div id="health-bar-fill" class="bg-red-600 h-full w-0 transition-all duration-300"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: ACERCA DE RETROOS 3.0 -->
+<div id="modal-about" class="hidden fixed inset-0 bg-black/40 z-[70] flex items-center justify-center p-4" onclick="if(event.target===this)closeAboutModal()">
+    <div class="win98-box w-96 max-w-[95vw] shadow-2xl p-3 text-xs" onclick="event.stopPropagation()">
+        <div class="win98-titlebar px-2 py-1 flex justify-between items-center mb-3">
+            <span class="text-xs font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Acerca de RetroOS 3.0</span>
+            <button onclick="closeAboutModal()" class="win98-btn text-black px-1.5 text-xs font-bold">X</button>
+        </div>
+        <div class="space-y-3 text-center">
+            <div class="flex items-center justify-center gap-3">
+                <i class="fa-solid fa-desktop text-3xl text-blue-900"></i>
+                <div class="text-left">
+                    <div class="font-bold text-sm text-gray-900">SimLab Software</div>
+                    <div class="text-[11px] text-gray-700">RetroOS 3.0 — Optimización & Hardware</div>
+                </div>
+            </div>
+            
+            <div class="win98-box-inset p-2 text-left space-y-1.5 text-[11px] bg-white">
+                <p><strong>Autor:</strong> Hugo Martín Villalba</p>
+                <p><strong>Licencia:</strong> Código abierto bajo <a href="LICENSE" target="_blank" class="text-blue-800 underline font-bold">Licencia MIT</a></p>
+                <p><strong>Sitio Web:</strong> <a href="https://simlabsoftware.netlify.app" target="_blank" rel="noopener noreferrer" class="text-blue-800 underline font-bold">simlabsoftware.netlify.app</a></p>
+                <p class="text-[10px] text-gray-600">Simulador educativo de arquitectura de computadoras, gestión de memoria virtual, paginación, cuellos de botella térmicos y diagnóstico de sistemas.</p>
+            </div>
+
+            <p class="text-[11px] text-gray-700 italic">"Si te gusta el Simulador queda a tu criterio una Mención o Donación para el autor."</p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2 pt-1">
+                <a href="https://cafecito.app/hmvillalba" target="_blank" rel="noopener noreferrer" class="win98-btn w-full sm:w-auto px-3 py-1.5 font-bold text-[11px] flex items-center justify-center gap-1.5 no-underline text-blue-900">
+                    <i class="fa-solid fa-mug-hot text-amber-600"></i> Invitame un Cafecito
+                </a>
+                <a href="https://ko-fi.com/hugomartinvillalba" target="_blank" rel="noopener noreferrer" class="win98-btn w-full sm:w-auto px-3 py-1.5 font-bold text-[11px] flex items-center justify-center gap-1.5 no-underline text-red-700">
+                    <i class="fa-solid fa-heart text-red-500"></i> Apoyar en Ko-fi
+                </a>
+            </div>
+
+            <div class="pt-2 border-t border-gray-400 flex justify-end">
+                <button onclick="closeAboutModal()" class="win98-btn px-4 py-1 font-bold">Aceptar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -785,6 +833,7 @@
             <div onclick="openWindow('win-cleaner'); toggleStartMenu(false)" class="p-1 hover:bg-blue-800 hover:text-white cursor-pointer"><i class="fa-solid fa-broom w-4"></i> Limpiador de Disco</div>
             <div onclick="openWindow('win-msconfig'); toggleStartMenu(false)" class="p-1 hover:bg-blue-800 hover:text-white cursor-pointer"><i class="fa-solid fa-sliders w-4"></i> MSConfig</div>
             <hr>
+            <div onclick="openAboutModal(); toggleStartMenu(false)" class="p-1 hover:bg-blue-800 hover:text-white cursor-pointer"><i class="fa-solid fa-circle-info w-4"></i> Acerca de RetroOS...</div>
             <div id="start-menu-teacher" onclick="openTeacherAuthModal(); toggleStartMenu(false)" class="p-1 hover:bg-blue-800 hover:text-white cursor-pointer font-bold text-yellow-900"><i class="fa-solid fa-user-graduate w-4"></i> Panel Docente</div>
         </div>
 

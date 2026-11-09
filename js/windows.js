@@ -69,6 +69,23 @@ function toggleStartMenu(forceState) {
     }
 }
 
+function openAboutModal() {
+    const modal = document.getElementById('modal-about');
+    if (modal) {
+        modal.classList.remove('hidden');
+        playSound('click');
+        logAuditEvent('Abrió ventana Acerca de RetroOS 3.0.');
+    }
+}
+
+function closeAboutModal() {
+    const modal = document.getElementById('modal-about');
+    if (modal) {
+        modal.classList.add('hidden');
+        playSound('click');
+    }
+}
+
 function bringToFront(win) {
     const z = (w) => parseInt(w.style.zIndex || getComputedStyle(w).zIndex, 10) || 20;
     const wins = Array.from(document.querySelectorAll('.win98-box[id^="win-"]')).sort((x, y) => z(x) - z(y));
