@@ -881,3 +881,4 @@ function exportHelpPDF() {
     doc.save('RetroOS_3_0_Manual_de_uso.pdf');
     logAuditEvent('[AYUDA] Manual de uso exportado a PDF.');
 }
+

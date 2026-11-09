@@ -491,3 +491,4 @@ function changeTeacherPassword() {
     document.getElementById('teacher-pass-confirm').value = '';
     showMsg('Clave actualizada correctamente (guardada cifrada). Se usará en el próximo acceso.', true);
 }
+

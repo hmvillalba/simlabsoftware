@@ -43,3 +43,4 @@ function toggleAudio() {
         btn.innerHTML = '<i class="fa-solid fa-volume-xmark text-red-700"></i> FX OFF';
     }
 }
+
