@@ -118,3 +118,4 @@ Si utilizas este simulador para tus clases, talleres educativos o aprendizaje pe
 ## 📄 Licencia
 
 Este proyecto se distribuye bajo los términos de la **Licencia MIT**. Consulta el archivo [LICENSE](LICENSE) para más información.
+
