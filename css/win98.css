@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Tahoma:wght@400;700&display=swap');
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Tahoma', 'Segoe UI', Geneva, Verdana, sans-serif;
+    user-select: none;
+    overflow: hidden;
+    background-color: #008080;
+}
+
+/* Windows 98 / Classic UI Styles */
+.win98-box {
+    background-color: #c0c0c0;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+    box-shadow: 1px 1px 0px #808080 inset, -1px -1px 0px #ffffff inset;
+}
+
+.win98-box-inset {
+    background-color: #ffffff;
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+}
+
+.win98-btn {
+    background-color: #c0c0c0;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+    cursor: pointer;
+    outline: none;
+}
+
+.win98-btn:active, .win98-btn.active {
+    border-top: 2px solid #000000;
+    border-left: 2px solid #000000;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    padding-top: 2px;
+    padding-left: 2px;
+}
+
+.win98-titlebar {
+    touch-action: none;
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: white;
+    font-weight: bold;
+}
+
+.defrag-grid {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 2px;
+}
+
+.block-used { background-color: #2563eb; }
+.block-frag { background-color: #dc2626; }
+.block-defragging { background-color: #059669; }
+
+/* Hardware Monitor 2.8 */
+.sparkline { display: flex; align-items: flex-end; gap: 1px; height: 36px; }
+.sparkline span { flex: 1; background: #2563eb; min-width: 3px; border-radius: 1px 1px 0 0; transition: height 0.3s; }
+.sparkline.cpu span { background: #dc2626; }
+.sparkline.temp span { background: #ea580c; }
+.sparkline.disk span { background: #7c3aed; }
+.fan-blade { animation: spin 1.2s linear infinite; transform-origin: center; }
+.fan-blade.slow { animation-duration: 2.8s; }
+.fan-blade.fast { animation-duration: 0.5s; }
+.fan-blade.stopped { animation: none; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.meter-bar { height: 10px; border: 1px solid #000; background: #e5e5e5; overflow: hidden; }
+.meter-fill { height: 100%; transition: width 0.4s ease; }
+.compare-row td { padding: 2px 6px; border-bottom: 1px solid #ccc; font-size: 11px; }
+.compare-better { color: #059669; font-weight: bold; }
+.compare-worse { color: #dc2626; font-weight: bold; }
+
+/* Ventanas adaptables y redimensionables */
+.win98-box[id^="win-"] { max-width: calc(100vw - 8px); }
+.win98-box[id^="win-"]:not(#win-teacher):not(#win-help) { max-height: calc(100vh - 56px); overflow: auto; }
+.win98-box[id^="win-"] > .win98-titlebar { position: sticky; top: 0; z-index: 6; }
+.win-resize-grip {
+    position: sticky; bottom: 0; display: block; flex: none;
+    margin-left: auto; margin-top: -14px; width: 14px; height: 14px;
+    cursor: nwse-resize; z-index: 7; touch-action: none;
+    background: linear-gradient(135deg, transparent 0 45%, #808080 45% 55%, transparent 55% 68%, #808080 68% 78%, transparent 78%);
+}
+@media (max-width: 640px) {
+    #mission-panel { width: min(20rem, calc(100vw - 24px)); max-height: 35vh; overflow-y: auto; }
+}
+
+::-webkit-scrollbar { width: 14px; height: 14px; background: #c0c0c0; }
+::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+}
