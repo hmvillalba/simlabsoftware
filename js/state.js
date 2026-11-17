@@ -1,5 +1,22 @@
 // js/state.js - Estado global y configuración del simulador RetroOS 3.0
 
+// --- Textos de ejecución (fase 3) ----------------------------------------
+// rt() busca en el diccionario del idioma activo con el prefijo rt. y cae al
+// español si falta (lo garantiza js/runtime-dict.js). rtf() reemplaza {campos}.
+function rt(key, fallback) {
+    return typeof window.t === 'function' ? window.t('rt.' + key, fallback) : fallback;
+}
+
+function rtf(key, params, fallback) {
+    var text = rt(key, fallback);
+    if (params) {
+        text = text.replace(/\{(\w+)\}/g, function (match, name) {
+            return params[name] !== undefined ? params[name] : match;
+        });
+    }
+    return text;
+}
+
 const osState = {
     totalRAM: 512,
     diskType: 'HDD',
@@ -306,6 +323,26 @@ const appCatalog = {
     'win-help': { title: 'Manual / Ayuda', icon: 'fa-book-open', ram: 20, cpu: 1, pid: 216, exe: 'help.exe' }
 };
 
+/** Título visible de una ventana/proceso en el idioma activo. */
+function appTitle(id) {
+    const app = appCatalog[id];
+    return app ? rt('app.' + id, app.title) : id;
+}
+
+/**
+ * Copia del escenario con nombre, síntomas y pasos traducidos. El estado y los
+ * números quedan intactos: solo se localiza lo que se muestra.
+ */
+function localizedScenario(num) {
+    const config = scenarioConfigs[num];
+    if (!config) return config;
+    return Object.assign({}, config, {
+        name: rt(`scen.${num}.name`, config.name),
+        symptoms: (config.symptoms || []).map((text, i) => rt(`scen.${num}.s.${i + 1}`, text)),
+        idealSteps: (config.idealSteps || []).map((text, i) => rt(`scen.${num}.p.${i + 1}`, text))
+    });
+}
+
 const helpContent = {
     alumno: `
         <h2 class="font-bold text-blue-900 text-sm border-b pb-1">Guía para alumnos</h2>
@@ -425,9 +462,9 @@ function logAuditEvent(msg, meta) {
 function copyAuditReport() {
     const report = osState.auditLog.join('\n');
     navigator.clipboard.writeText(report).then(() => {
-        alert('Informe de Auditoría paso a paso copiado al portapapeles.');
+        alert(rt('alert.auditCopied', 'Informe de Auditoría copiado al portapapeles.'));
     }).catch(() => {
-        alert('Copiado manualmente:\n' + report);
+        alert(rtf('alert.auditCopyManual', { report }, 'Copiado manualmente:\n' + report));
     });
 }
 

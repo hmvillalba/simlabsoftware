@@ -18,13 +18,13 @@ function closeTeacherAuthModal() {
 
 function teacherLogout() {
     if (osState.examMode) {
-        alert('Hay un examen en curso. Finalizalo o cancelalo antes de cerrar la sesión docente.');
+        alert(rt('alert.teacherExamActive', 'Hay un examen en curso.'));
         return;
     }
     osState.teacherUnlocked = false;
     closeWindow('win-teacher');
-    logAuditEvent('[DOCENTE] Sesión cerrada. Se requiere clave nuevamente.');
-    alert('Sesión docente cerrada.\nPara volver a entrar hace falta la clave.');
+    logAuditEvent(rt('log.teacherLogout', 'Sesión docente cerrada.'));
+    alert(rt('alert.teacherLoggedOut', 'Sesión docente cerrada.'));
 }
 
 function setStudentOnlyMode(enabled) {
@@ -35,7 +35,9 @@ function setStudentOnlyMode(enabled) {
         if (enabled) desk.classList.add('hidden');
         else desk.classList.remove('hidden');
     }
-    logAuditEvent(`[DOCENTE] Modo solo alumno: ${enabled ? 'activado (icono escritorio oculto)' : 'desactivado'}.`);
+    logAuditEvent(rtf('log.studentOnly', {
+        state: enabled ? rt('log.studentOnlyOn', 'activado') : rt('log.studentOnlyOff', 'desactivado')
+    }, 'Modo solo alumno.'));
 }
 
 function applyStudentOnlyModeFromStorage() {
@@ -183,8 +185,13 @@ function restoreExamSession() {
     setExamFormLocked(true);
     document.getElementById('exam-status-bar').classList.remove('hidden');
     const group = getExamGroupLabel();
-    document.getElementById('exam-status-text').innerText =
-        `EXAMEN EN CURSO (restaurado tras recarga) · ${group ? group + ' · ' : ''}${getExamStudentsLabel()} · Esc ${osState.currentScenario} · Nv ${osState.examDifficulty} · Salud ini: ${osState.examStartHealth}%`;
+    document.getElementById('exam-status-text').innerText = rtf('ui.examStatusRestored', {
+        group: group ? group + ' · ' : '',
+        students: getExamStudentsLabel(),
+        scenario: osState.currentScenario,
+        level: osState.examDifficulty,
+        health: osState.examStartHealth
+    }, 'EXAMEN EN CURSO (restaurado).');
     document.getElementById('exam-results-panel').classList.add('hidden');
     const mission = document.getElementById('mission-panel');
     if (mission) mission.classList.add('hidden');
@@ -198,7 +205,7 @@ function restoreExamSession() {
     updateBudgetDisplay();
     updateSystemState();
     const away = Math.max(0, Math.round((Date.now() - (data.savedAt || Date.now())) / 1000));
-    logAuditEvent(`[EXAMEN] Sesión restaurada tras recarga del navegador (inactiva ~${away}s). El cronómetro continúa desde el inicio original.`, { type: 'session_restored' });
+    logAuditEvent(rtf('log.sessionRestored', { seconds: away }, 'Sesión restaurada tras recarga.'), { type: 'session_restored' });
     return true;
 }
 
@@ -212,7 +219,7 @@ function saveExamHistory() {
             osState.examHistory = osState.examHistory.slice(-20);
             localStorage.setItem(EXAM_HISTORY_KEY, JSON.stringify(osState.examHistory));
         } catch (e2) {
-            alert('No se pudo guardar el historial en este navegador. Exportá los informes (PDF/CSV) para no perderlos.');
+            alert(rt('alert.historySaveFailed', 'No se pudo guardar el historial.'));
         }
     }
 }
@@ -230,7 +237,7 @@ function renderExamHistory() {
     const list = document.getElementById('exam-history-list');
     if (!list) return;
     if (!osState.examHistory.length) {
-        list.innerHTML = '<p class="text-gray-500">Aún no hay evaluaciones guardadas.</p>';
+        list.innerHTML = `<p class="text-gray-500">${rt('ui.historyEmpty', 'Aún no hay evaluaciones guardadas.')}</p>`;
         return;
     }
     list.innerHTML = osState.examHistory.map((h, i) => {
@@ -239,7 +246,7 @@ function renderExamHistory() {
         return `<div class="flex flex-wrap items-center justify-between gap-1 bg-white border border-teal-200 p-1 rounded">
             <span class="font-mono"><b>#${i + 1}</b> ${group ? group + ' · ' : ''}${names} · Esc${h.scenario} · <b>${h.score}%</b> · ${h.endTime}</span>
             <span class="flex gap-1">
-                <button onclick="loadHistoryReport(${i})" class="win98-btn px-1.5 py-0.5 text-[10px] font-bold">Ver</button>
+                <button onclick="loadHistoryReport(${i})" class="win98-btn px-1.5 py-0.5 text-[10px] font-bold">${rt('ui.historyView', 'Ver')}</button>
                 <button onclick="exportHistoryPDF(${i})" class="win98-btn px-1.5 py-0.5 text-[10px] font-bold text-red-800">PDF</button>
                 <button onclick="exportHistoryTXT(${i})" class="win98-btn px-1.5 py-0.5 text-[10px] font-bold text-blue-900">TXT</button>
             </span>
@@ -249,11 +256,11 @@ function renderExamHistory() {
 
 function clearExamHistory() {
     if (!osState.examHistory.length) return;
-    if (!confirm('¿Vaciar TODO el historial de evaluaciones guardado en este navegador? Esta acción no se puede deshacer.')) return;
+    if (!confirm(rt('alert.clearHistory', '¿Vaciar TODO el historial?'))) return;
     osState.examHistory = [];
     saveExamHistory();
     renderExamHistory();
-    logAuditEvent('[DOCENTE] Historial de evaluaciones vaciado.');
+    logAuditEvent(rt('log.historyCleared', 'Historial de evaluaciones vaciado.'));
 }
 
 function loadHistoryReport(index) {
@@ -266,13 +273,13 @@ function loadHistoryReport(index) {
     if (panel) {
         panel.classList.remove('hidden');
         let html = '';
-        if (h.course || h.division) html += `<p class="font-bold text-indigo-900">Curso/División: ${h.course || '—'} ${h.division || ''}</p>`;
-        html += `<p class="font-bold text-indigo-900">${h.isGroup ? 'Grupo' : 'Alumno'}: ${h.studentName}</p>`;
-        html += `<p class="font-bold">Nota: ${h.score}% · Escenario ${h.scenarioName} · ${h.endTime}</p>`;
-        if (h.observations) html += `<p class="text-[10px] mt-1"><b>Observaciones:</b> ${String(h.observations).replace(/</g, '&lt;')}</p>`;
+        if (h.course || h.division) html += `<p class="font-bold text-indigo-900">${rtf('ui.historyCourseDivision', { course: h.course || '—', division: h.division || '' }, 'Curso/División')}</p>`;
+        html += `<p class="font-bold text-indigo-900">${h.isGroup ? rt('ui.historyGroup', 'Grupo') : rt('ui.historyStudent', 'Alumno')}: ${h.studentName}</p>`;
+        html += `<p class="font-bold">${rtf('ui.historyScore', { score: h.score, scenario: h.scenarioName, time: h.endTime }, 'Nota')}</p>`;
+        if (h.observations) html += `<p class="text-[10px] mt-1"><b>${rt('ui.historyObservations', 'Observaciones:')}</b> ${String(h.observations).replace(/</g, '&lt;')}</p>`;
         panel.innerHTML = html;
     }
-    document.getElementById('exam-status-text').innerText = `Historial #${index + 1} cargado — listo para re-exportar.`;
+    document.getElementById('exam-status-text').innerText = rtf('ui.historyLoaded', { n: index + 1 }, `Historial #${index + 1} cargado.`);
     document.getElementById('exam-status-bar')?.classList.remove('hidden');
 }
 
@@ -404,7 +411,7 @@ function setTeacherPassword(pass) {
         localStorage.setItem(TEACHER_HASH_KEY, JSON.stringify({ salt, hash: hashPassword(pass, salt) }));
         localStorage.removeItem(TEACHER_LEGACY_KEY);
     } catch (e) {
-        alert('No se pudo guardar la clave en este navegador (localStorage bloqueado).');
+        alert(rt('alert.teacherPassSaveFailed', 'No se pudo guardar la clave.'));
         return false;
     }
     return true;
@@ -416,7 +423,7 @@ function checkTeacherPassword() {
     const now = Date.now();
     if (now < loginLockUntil) {
         playSound('error');
-        showErr(`Demasiados intentos. Esperá ${Math.ceil((loginLockUntil - now) / 1000)} s.`);
+        showErr(rtf('alert.loginLocked', { seconds: Math.ceil((loginLockUntil - now) / 1000) }, 'Demasiados intentos.'));
         return;
     }
     const input = document.getElementById('teacher-pass-input').value;
@@ -430,10 +437,10 @@ function checkTeacherPassword() {
         document.getElementById('teacher-pass-input').value = '';
         errEl.classList.add('hidden');
         closeTeacherAuthModal();
-        logAuditEvent("Panel de Docente autenticado exitosamente.");
+        logAuditEvent(rt('log.teacherAuth', 'Panel de Docente autenticado exitosamente.'));
         openWindow('win-teacher');
         if (osState.mustChangePass) {
-            alert('Estás usando la clave inicial (1234).\nCambiala ahora: no vas a poder iniciar exámenes hasta hacerlo.');
+            alert(rt('alert.initialPass', 'Estás usando la clave inicial (1234).'));
             const cur = document.getElementById('teacher-pass-current');
             if (cur) { cur.focus(); cur.scrollIntoView({ block: 'center' }); }
         }
@@ -443,9 +450,9 @@ function checkTeacherPassword() {
         if (loginFails >= 5) {
             loginLockUntil = Date.now() + 30000;
             loginFails = 0;
-            showErr('Demasiados intentos. Esperá 30 s.');
+            showErr(rt('alert.loginLocked', 'Demasiados intentos. Esperá 30 s.'));
         } else {
-            showErr('Clave incorrecta. Intente de nuevo.');
+            showErr(rt('alert.loginWrong', 'Clave incorrecta. Intente de nuevo.'));
         }
     }
 }

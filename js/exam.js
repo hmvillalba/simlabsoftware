@@ -6,12 +6,12 @@ function setExamDifficulty(level) {
     const btn = document.getElementById('btn-toggle-correction');
     if (osState.examDifficulty === 1) {
         if (panel) panel.classList.remove('hidden');
-        if (btn) btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Ocultar Pauta';
+        if (btn) btn.innerHTML = `<i class="fa-solid fa-eye-slash"></i> ${rt('ui.correctionHide', 'Ocultar Pauta')}`;
     } else if (osState.examDifficulty === 3) {
         if (panel) panel.classList.add('hidden');
-        if (btn) btn.innerHTML = '<i class="fa-solid fa-book-bookmark"></i> Ver Pauta';
+        if (btn) btn.innerHTML = `<i class="fa-solid fa-book-bookmark"></i> ${rt('ui.correctionShow', 'Ver Pauta')}`;
     }
-    logAuditEvent(`Nivel de dificultad establecido: ${osState.examDifficulty}`);
+    logAuditEvent(rtf('log.difficulty', { level: osState.examDifficulty }, `Nivel de dificultad: ${osState.examDifficulty}`));
 }
 
 function setScenarioButtonsLocked(locked) {
@@ -21,7 +21,7 @@ function setScenarioButtonsLocked(locked) {
             btn.disabled = locked;
             btn.style.opacity = locked ? '0.45' : '1';
             btn.style.pointerEvents = locked ? 'none' : 'auto';
-            btn.title = locked ? 'Bloqueado durante el examen' : '';
+            btn.title = locked ? rt('ui.lockedDuringExam', 'Bloqueado durante el examen') : '';
         }
     }
     const diffSel = document.getElementById('exam-difficulty');
@@ -32,13 +32,13 @@ function getExamStudentsLabel() {
     const list = osState.examStudents || [];
     if (list.length === 0) return '—';
     if (list.length === 1) return list[0];
-    return list.join(' · ') + ` (${list.length} alumnos)`;
+    return list.join(' · ') + ' ' + rtf('ui.studentsCount', { n: list.length }, `(${list.length} alumnos)`);
 }
 
 function getExamGroupLabel() {
     const parts = [];
     if (osState.examCourse) parts.push(osState.examCourse);
-    if (osState.examDivision) parts.push('Div. ' + osState.examDivision);
+    if (osState.examDivision) parts.push(rtf('ui.groupDiv', { div: osState.examDivision }, 'Div. ' + osState.examDivision));
     return parts.length ? parts.join(' ') : '';
 }
 
@@ -46,35 +46,35 @@ function renderExamStudentsList() {
     const el = document.getElementById('exam-students-list');
     if (!el) return;
     if (!osState.examStudents.length) {
-        el.innerHTML = '<span class="text-gray-400">Ningún alumno agregado</span>';
+        el.innerHTML = `<span class="text-gray-400">${rt('ui.studentsNone', 'Ningún alumno agregado')}</span>`;
         return;
     }
     el.innerHTML = osState.examStudents.map((name, i) =>
         `<span class="inline-flex items-center gap-1 bg-indigo-100 border border-indigo-300 px-1.5 py-0.5 rounded">
             <i class="fa-solid fa-user text-indigo-700"></i> ${name}
-            <button type="button" onclick="removeExamStudent(${i})" class="text-red-700 font-bold leading-none ${osState.examMode ? 'hidden' : ''}" title="Quitar">×</button>
+            <button type="button" onclick="removeExamStudent(${i})" class="text-red-700 font-bold leading-none ${osState.examMode ? 'hidden' : ''}" title="${rt('ui.studentsRemove', 'Quitar')}">×</button>
         </span>`
     ).join('');
 }
 
 function addExamStudent() {
     if (osState.examMode) {
-        alert('No se pueden agregar alumnos durante el examen.');
+        alert(rt('alert.examNoAddStudents', 'No se pueden agregar alumnos durante el examen.'));
         return;
     }
     const input = document.getElementById('exam-student-name');
     const name = (input ? input.value : '').trim();
     if (!name) {
-        alert('Escribí el nombre del alumno.');
+        alert(rt('alert.examStudentName', 'Escribí el nombre del alumno.'));
         if (input) input.focus();
         return;
     }
     if (osState.examStudents.some(s => s.toLowerCase() === name.toLowerCase())) {
-        alert('Ese alumno ya está en la lista.');
+        alert(rt('alert.examStudentDuplicate', 'Ese alumno ya está en la lista.'));
         return;
     }
     if (osState.examStudents.length >= 8) {
-        alert('Máximo 8 alumnos por examen grupal.');
+        alert(rt('alert.examStudentMax', 'Máximo 8 alumnos por examen grupal.'));
         return;
     }
     osState.examStudents.push(name);
@@ -109,7 +109,12 @@ function showExamBanner(show) {
         if (info) {
             const group = getExamGroupLabel();
             const names = getExamStudentsLabel();
-            info.innerText = `${group ? group + ' · ' : ''}${names} · Esc. ${osState.currentScenario} · Nv ${osState.examDifficulty}`;
+            info.innerText = rtf('ui.examBanner', {
+                group: group ? group + ' · ' : '',
+                names,
+                scenario: osState.currentScenario,
+                level: osState.examDifficulty
+            }, `${names} · Esc. ${osState.currentScenario} · Nv ${osState.examDifficulty}`);
         }
     } else {
         banner.classList.add('hidden');
@@ -118,11 +123,11 @@ function showExamBanner(show) {
 
 function startExamMode() {
     if (osState.mustChangePass) {
-        alert('Cambiá la clave inicial del docente antes de iniciar un examen.');
+        alert(rt('alert.examChangePass', 'Cambiá la clave inicial del docente antes de iniciar un examen.'));
         return;
     }
     if (osState.examMode) {
-        alert('Ya hay un examen en curso. Finalizalo o cancelalo primero.');
+        alert(rt('alert.examAlreadyRunning', 'Ya hay un examen en curso.'));
         return;
     }
     const nameInput = document.getElementById('exam-student-name');
@@ -133,7 +138,7 @@ function startExamMode() {
         renderExamStudentsList();
     }
     if (osState.examStudents.length === 0) {
-        alert('Agregá al menos un alumno (o un grupo) antes de iniciar el examen.');
+        alert(rt('alert.examNeedStudent', 'Agregá al menos un alumno antes de iniciar el examen.'));
         if (nameInput) nameInput.focus();
         return;
     }
@@ -160,8 +165,13 @@ function startExamMode() {
     const statusBar = document.getElementById('exam-status-bar');
     statusBar.classList.remove('hidden');
     const group = getExamGroupLabel();
-    document.getElementById('exam-status-text').innerText =
-        `EXAMEN EN CURSO · ${group ? group + ' · ' : ''}${getExamStudentsLabel()} · Esc ${osState.currentScenario} · Nv ${osState.examDifficulty} · Salud ini: ${osState.examStartHealth}%`;
+    document.getElementById('exam-status-text').innerText = rtf('ui.examStatusRunning', {
+        group: group ? group + ' · ' : '',
+        students: getExamStudentsLabel(),
+        scenario: osState.currentScenario,
+        level: osState.examDifficulty,
+        health: osState.examStartHealth
+    }, 'EXAMEN EN CURSO.');
     document.getElementById('exam-results-panel').classList.add('hidden');
 
     const mission = document.getElementById('mission-panel');
@@ -171,16 +181,24 @@ function startExamMode() {
     setScenarioButtonsLocked(true);
     setExamDifficulty(osState.examDifficulty);
 
-    logAuditEvent(`[EXAMEN] Iniciado. Curso: ${osState.examCourse || '—'} Div: ${osState.examDivision || '—'}. Alumnos: ${osState.examStudentName}. Escenario ${osState.currentScenario}.`);
-    alert(`Modo Examen activado\n\n${group ? 'Curso/Div: ' + group + '\n' : ''}Alumnos:\n• ${osState.examStudents.join('\n• ')}\n\n• Banner rojo + temporizador\n• Panel de Misión oculto\n• Escenarios bloqueados`);
+    logAuditEvent(rtf('log.examStarted', {
+        course: osState.examCourse || '—',
+        division: osState.examDivision || '—',
+        students: osState.examStudentName,
+        scenario: osState.currentScenario
+    }, 'Examen iniciado.'));
+    alert(rtf('alert.examStarted', {
+        group: group ? rt('ui.examCourseDiv', 'Curso/Div: ') + group + '\n' : '',
+        students: osState.examStudents.join('\n• ')
+    }, 'Modo Examen activado.'));
 }
 
 function cancelExamMode() {
     if (!osState.examMode) {
-        alert('No hay examen en curso.');
+        alert(rt('alert.examNoRunning', 'No hay examen en curso.'));
         return;
     }
-    if (!confirm('¿Cancelar el examen sin evaluar?\n\nSe restaurará el Panel de Misión y se desbloquearán los escenarios.\nNo se generará puntuación.')) {
+    if (!confirm(rt('alert.examCancelConfirm', '¿Cancelar el examen sin evaluar?'))) {
         return;
     }
     osState.examMode = false;
@@ -193,7 +211,7 @@ function cancelExamMode() {
     document.getElementById('btn-end-exam').classList.add('hidden');
     document.getElementById('btn-cancel-exam').classList.add('hidden');
     setExamFormLocked(false);
-    document.getElementById('exam-status-text').innerText = 'Examen cancelado (sin evaluación). Escenarios desbloqueados.';
+    document.getElementById('exam-status-text').innerText = rt('ui.examStatusCancelled', 'Examen cancelado.');
     document.getElementById('exam-results-panel').classList.add('hidden');
 
     const mission = document.getElementById('mission-panel');
@@ -201,8 +219,8 @@ function cancelExamMode() {
     showExamBanner(false);
     setScenarioButtonsLocked(false);
 
-    logAuditEvent(`[EXAMEN] Cancelado. Alumnos: "${osState.examStudentName || '—'}". Sin evaluación.`);
-    alert('Examen cancelado.\nPanel de Misión restaurado.\nEscenarios desbloqueados.');
+    logAuditEvent(rtf('log.examCancelled', { students: osState.examStudentName || '—' }, 'Examen cancelado.'));
+    alert(rt('alert.examCancelled', 'Examen cancelado.'));
 }
 
 function captureExamSnapshot() {
@@ -254,15 +272,15 @@ function evaluateExamCriteria(start, end) {
     maxPoints += 15;
     if (endH >= 85) {
         points += 15;
-        criteria.push({ name: 'Salud del sistema ≥ 85%', ok: true, detail: `${startH}% → ${endH}%` });
+        criteria.push({ name: rt('exam.crit.healthHigh', 'Salud del sistema ≥ 85%'), ok: true, detail: rtf('exam.crit.healthRange', { start: startH, end: endH }, `${startH}% → ${endH}%`) });
     } else if (endH > startH + 15) {
         points += 10;
-        criteria.push({ name: 'Salud del sistema mejoró notablemente', ok: true, detail: `${startH}% → ${endH}% (+${endH - startH})` });
+        criteria.push({ name: rt('exam.crit.healthNotable', 'Salud del sistema mejoró notablemente'), ok: true, detail: rtf('exam.crit.healthImproved', { start: startH, end: endH, delta: endH - startH }, `${startH}% → ${endH}%`) });
     } else if (endH > startH) {
         points += 5;
-        criteria.push({ name: 'Salud del sistema mejoró levemente', ok: true, detail: `${startH}% → ${endH}%` });
+        criteria.push({ name: rt('exam.crit.healthSlight', 'Salud del sistema mejoró levemente'), ok: true, detail: rtf('exam.crit.healthRange', { start: startH, end: endH }, `${startH}% → ${endH}%`) });
     } else {
-        criteria.push({ name: 'Salud del sistema', ok: false, detail: `${startH}% → ${endH}% (sin mejora suficiente)` });
+        criteria.push({ name: rt('exam.crit.healthBase', 'Salud del sistema'), ok: false, detail: rtf('exam.crit.healthNoImprove', { start: startH, end: endH }, `${startH}% → ${endH}%`) });
     }
 
     // 2. Malware
@@ -270,9 +288,9 @@ function evaluateExamCriteria(start, end) {
         maxPoints += 15;
         if (!end.malware) {
             points += 15;
-            criteria.push({ name: 'Malware eliminado', ok: true, detail: 'svchost_fake.exe finalizado' });
+            criteria.push({ name: rt('exam.crit.malware', 'Malware eliminado'), ok: true, detail: rt('exam.crit.malwareKilled', 'svchost_fake.exe finalizado') });
         } else {
-            criteria.push({ name: 'Malware eliminado', ok: false, detail: 'Sigue activo' });
+            criteria.push({ name: rt('exam.crit.malware', 'Malware eliminado'), ok: false, detail: rt('exam.crit.malwareActive', 'Sigue activo') });
         }
         maxPoints += 8;
         const disabledInMsconfig = acts.some(a =>
@@ -280,12 +298,12 @@ function evaluateExamCriteria(start, end) {
         );
         if (!end.malware && disabledInMsconfig) {
             points += 8;
-            criteria.push({ name: 'Persistencia del malware eliminada (MSConfig)', ok: true, detail: 'Deshabilitado al inicio' });
+            criteria.push({ name: rt('exam.crit.persist', 'Persistencia del malware eliminada'), ok: true, detail: rt('exam.crit.persistDisabled', 'Deshabilitado al inicio') });
         } else if (!end.malware) {
             points += 3;
-            criteria.push({ name: 'Persistencia del malware eliminada (MSConfig)', ok: false, detail: 'Proceso muerto pero no deshabilitado al inicio' });
+            criteria.push({ name: rt('exam.crit.persist', 'Persistencia del malware eliminada'), ok: false, detail: rt('exam.crit.persistNotDisabled', 'Proceso muerto pero no deshabilitado') });
         } else {
-            criteria.push({ name: 'Persistencia del malware eliminada (MSConfig)', ok: false, detail: 'No corregido' });
+            criteria.push({ name: rt('exam.crit.persist', 'Persistencia del malware eliminada'), ok: false, detail: rt('exam.crit.persistNotFixed', 'No corregido') });
         }
     }
 
@@ -294,17 +312,17 @@ function evaluateExamCriteria(start, end) {
         maxPoints += 12;
         if (!end.swapping && end.ramUsed < end.ram * 0.8) {
             points += 12;
-            criteria.push({ name: 'Presión de memoria / thrashing resuelto', ok: true, detail: `RAM ${end.ramUsed}/${end.ram} MB, swap off` });
+            criteria.push({ name: rt('exam.crit.memory', 'Presión de memoria resuelta'), ok: true, detail: rtf('exam.crit.memoryResolved', { used: end.ramUsed, total: end.ram }, `RAM ${end.ramUsed}/${end.ram} MB`) });
         } else {
-            criteria.push({ name: 'Presión de memoria / thrashing resuelto', ok: false, detail: end.swapping ? 'Sigue en swap' : `RAM ${end.ramUsed}/${end.ram} MB` });
+            criteria.push({ name: rt('exam.crit.memory', 'Presión de memoria resuelta'), ok: false, detail: end.swapping ? rt('exam.crit.memorySwap', 'Sigue en swap') : rtf('exam.crit.memoryRam', { used: end.ramUsed, total: end.ram }, `RAM ${end.ramUsed}/${end.ram} MB`) });
         }
         if (start.ram <= 512) {
             maxPoints += 8;
             if (end.ram >= 1536) {
                 points += 8;
-                criteria.push({ name: 'Ampliación de RAM adecuada', ok: true, detail: `${start.ram} → ${end.ram} MB` });
+                criteria.push({ name: rt('exam.crit.ramUpgrade', 'Ampliación de RAM adecuada'), ok: true, detail: rtf('exam.crit.ramUpgradeDetail', { start: start.ram, end: end.ram }, `${start.ram} → ${end.ram} MB`) });
             } else {
-                criteria.push({ name: 'Ampliación de RAM adecuada', ok: false, detail: `Sigue en ${end.ram} MB` });
+                criteria.push({ name: rt('exam.crit.ramUpgrade', 'Ampliación de RAM adecuada'), ok: false, detail: rtf('exam.crit.ramStill', { end: end.ram }, `Sigue en ${end.ram} MB`) });
             }
         }
     }
@@ -313,28 +331,29 @@ function evaluateExamCriteria(start, end) {
     maxPoints += 6;
     if (end.pf <= start.pf + 5 || !end.swapping) {
         points += 6;
-        criteria.push({ name: 'Page Faults controlados', ok: true, detail: `PF inicio ~${start.pf}, fin ${end.pf}` });
+        criteria.push({ name: rt('exam.crit.pf', 'Page Faults controlados'), ok: true, detail: rtf('exam.crit.pfOk', { start: start.pf, end: end.pf }, `PF ${start.pf} → ${end.pf}`) });
     } else {
-        criteria.push({ name: 'Page Faults controlados', ok: false, detail: `PF siguen subiendo (${end.pf})` });
+        criteria.push({ name: rt('exam.crit.pf', 'Page Faults controlados'), ok: false, detail: rtf('exam.crit.pfBad', { end: end.pf }, 'PF siguen subiendo') });
     }
 
     // 5. Fragmentación / disco
     if (start.frag > 20 && start.diskType === 'HDD') {
         maxPoints += 10;
+        const fragDetail = rtf('exam.crit.fragDetail', { start: start.frag, end: end.frag }, `${start.frag}% → ${end.frag}%`);
         if (end.frag <= 12) {
             points += 10;
-            criteria.push({ name: 'Fragmentación de HDD corregida', ok: true, detail: `${start.frag}% → ${end.frag}%` });
+            criteria.push({ name: rt('exam.crit.frag', 'Fragmentación de HDD corregida'), ok: true, detail: fragDetail });
         } else {
-            criteria.push({ name: 'Fragmentación de HDD corregida', ok: false, detail: `${start.frag}% → ${end.frag}%` });
+            criteria.push({ name: rt('exam.crit.frag', 'Fragmentación de HDD corregida'), ok: false, detail: fragDetail });
         }
     }
     if (start.diskType === 'HDD' && start.frag > 30) {
         maxPoints += 5;
         if (end.diskType === 'SSD') {
             points += 5;
-            criteria.push({ name: 'Migración a SSD (opcional)', ok: true, detail: 'HDD → SSD' });
+            criteria.push({ name: rt('exam.crit.ssd', 'Migración a SSD (opcional)'), ok: true, detail: rt('exam.crit.ssdOk', 'HDD → SSD') });
         } else {
-            criteria.push({ name: 'Migración a SSD (opcional)', ok: false, detail: 'Sigue en HDD' });
+            criteria.push({ name: rt('exam.crit.ssd', 'Migración a SSD (opcional)'), ok: false, detail: rt('exam.crit.ssdNo', 'Sigue en HDD') });
         }
     }
 
@@ -343,9 +362,9 @@ function evaluateExamCriteria(start, end) {
         maxPoints += 12;
         if (end.temp <= 65 && !end.throttle) {
             points += 12;
-            criteria.push({ name: 'Temperatura y refrigeración normalizadas', ok: true, detail: `${start.temp}°C → ${end.temp}°C, cool ${end.cool}%` });
+            criteria.push({ name: rt('exam.crit.temp', 'Temperatura y refrigeración normalizadas'), ok: true, detail: rtf('exam.crit.tempOk', { start: start.temp, end: end.temp, cool: end.cool }, `${start.temp}°C → ${end.temp}°C`) });
         } else {
-            criteria.push({ name: 'Temperatura y refrigeración normalizadas', ok: false, detail: `${start.temp}°C → ${end.temp}°C` });
+            criteria.push({ name: rt('exam.crit.temp', 'Temperatura y refrigeración normalizadas'), ok: false, detail: rtf('exam.crit.tempDetail', { start: start.temp, end: end.temp }, `${start.temp}°C → ${end.temp}°C`) });
         }
     }
 
@@ -354,9 +373,9 @@ function evaluateExamCriteria(start, end) {
         maxPoints += 10;
         if (end.junk < 40 && end.free > start.free) {
             points += 10;
-            criteria.push({ name: 'Espacio en disco recuperado', ok: true, detail: `Libre ${start.free}→${end.free} GB` });
+            criteria.push({ name: rt('exam.crit.disk', 'Espacio en disco recuperado'), ok: true, detail: rtf('exam.crit.diskOk', { start: start.free, end: end.free }, `Libre ${start.free} → ${end.free} GB`) });
         } else {
-            criteria.push({ name: 'Espacio en disco recuperado', ok: false, detail: `Libre ${end.free} GB, basura ${end.junk} MB` });
+            criteria.push({ name: rt('exam.crit.disk', 'Espacio en disco recuperado'), ok: false, detail: rtf('exam.crit.diskBad', { end: end.free, junk: end.junk }, `Libre ${end.free} GB`) });
         }
     }
 
@@ -365,9 +384,9 @@ function evaluateExamCriteria(start, end) {
         maxPoints += 12;
         if (end.net) {
             points += 12;
-            criteria.push({ name: 'Conectividad de red restaurada', ok: true, detail: 'Red OK' });
+            criteria.push({ name: rt('exam.crit.net', 'Conectividad de red restaurada'), ok: true, detail: rt('exam.crit.netOk', 'Red OK') });
         } else {
-            criteria.push({ name: 'Conectividad de red restaurada', ok: false, detail: 'Sigue sin conexión' });
+            criteria.push({ name: rt('exam.crit.net', 'Conectividad de red restaurada'), ok: false, detail: rt('exam.crit.netBad', 'Sigue sin conexión') });
         }
     }
 
@@ -378,12 +397,12 @@ function evaluateExamCriteria(start, end) {
         const appsClean = !end.heavyStartup && !end.conflict;
         if (appsClean && bootImproved) {
             points += 10;
-            criteria.push({ name: 'Inicio optimizado', ok: true, detail: `Boot ${start.boot}s → ${end.boot}s` });
+            criteria.push({ name: rt('exam.crit.boot', 'Inicio optimizado'), ok: true, detail: rtf('exam.crit.bootDetail', { start: start.boot, end: end.boot }, `Boot ${start.boot}s → ${end.boot}s`) });
         } else if (appsClean || bootImproved) {
             points += 5;
-            criteria.push({ name: 'Inicio parcialmente optimizado', ok: true, detail: `Boot ${end.boot}s` });
+            criteria.push({ name: rt('exam.crit.bootPartial', 'Inicio parcialmente optimizado'), ok: true, detail: rtf('exam.crit.bootDetail', { start: start.boot, end: end.boot }, `Boot ${end.boot}s`) });
         } else {
-            criteria.push({ name: 'Inicio optimizado', ok: false, detail: `Boot ${end.boot}s, procesos problemáticos activos` });
+            criteria.push({ name: rt('exam.crit.boot', 'Inicio optimizado'), ok: false, detail: rtf('exam.crit.bootDetailPartial', { boot: end.boot }, `Boot ${end.boot}s`) });
         }
     }
 
@@ -393,9 +412,9 @@ function evaluateExamCriteria(start, end) {
         maxPoints += 6;
         if (end.cpu < 45 || killedHeavy) {
             points += 6;
-            criteria.push({ name: 'Procesos pesados innecesarios controlados', ok: true, detail: `CPU fin ~${Math.round(end.cpu)}%` });
+            criteria.push({ name: rt('exam.crit.heavy', 'Procesos pesados controlados'), ok: true, detail: rtf('exam.crit.heavyOk', { cpu: Math.round(end.cpu) }, `CPU ~${Math.round(end.cpu)}%`) });
         } else {
-            criteria.push({ name: 'Procesos pesados innecesarios controlados', ok: false, detail: `CPU ~${Math.round(end.cpu)}%` });
+            criteria.push({ name: rt('exam.crit.heavy', 'Procesos pesados controlados'), ok: false, detail: rtf('exam.crit.heavyBad', { cpu: Math.round(end.cpu) }, `CPU ~${Math.round(end.cpu)}%`) });
         }
     }
 
@@ -417,15 +436,15 @@ function evaluateExamCriteria(start, end) {
     const diagCount = diagList.length;
     if (diagCount >= 3) {
         points += 12;
-        criteria.push({ name: 'Uso de herramientas de diagnóstico', ok: true, detail: `${diagCount} herramientas: ${diagList.join(', ')}` });
+        criteria.push({ name: rt('exam.crit.diag', 'Uso de herramientas de diagnóstico'), ok: true, detail: rtf('exam.crit.diagOk', { n: diagCount, tools: diagList.join(', ') }, `${diagCount} herramientas`) });
     } else if (diagCount >= 2) {
         points += 8;
-        criteria.push({ name: 'Uso de herramientas de diagnóstico', ok: true, detail: `${diagCount} herramientas: ${diagList.join(', ')}` });
+        criteria.push({ name: rt('exam.crit.diag', 'Uso de herramientas de diagnóstico'), ok: true, detail: rtf('exam.crit.diagOk', { n: diagCount, tools: diagList.join(', ') }, `${diagCount} herramientas`) });
     } else if (diagCount === 1) {
         points += 4;
-        criteria.push({ name: 'Uso de herramientas de diagnóstico', ok: true, detail: `Solo: ${diagList[0]}` });
+        criteria.push({ name: rt('exam.crit.diag', 'Uso de herramientas de diagnóstico'), ok: true, detail: rtf('exam.crit.diagSome', { tool: diagList[0] }, `Solo: ${diagList[0]}`) });
     } else {
-        criteria.push({ name: 'Uso de herramientas de diagnóstico', ok: false, detail: 'No se usaron herramientas de diagnóstico' });
+        criteria.push({ name: rt('exam.crit.diag', 'Uso de herramientas de diagnóstico'), ok: false, detail: rt('exam.crit.diagNone', 'No se usaron herramientas de diagnóstico') });
     }
 
     // 12. Diagnóstico antes de reparar
@@ -434,12 +453,12 @@ function evaluateExamCriteria(start, end) {
     const firstFixIdx = acts.findIndex(isFixAction);
     if (firstDiagIdx >= 0 && (firstFixIdx < 0 || firstDiagIdx < firstFixIdx)) {
         points += 8;
-        criteria.push({ name: 'Diagnóstico antes de intervenir', ok: true, detail: 'Observó el sistema antes de reparar' });
+        criteria.push({ name: rt('exam.crit.before', 'Diagnóstico antes de intervenir'), ok: true, detail: rt('exam.crit.beforeOk', 'Observó el sistema antes de reparar') });
     } else if (firstDiagIdx >= 0) {
         points += 3;
-        criteria.push({ name: 'Diagnóstico antes de intervenir', ok: false, detail: 'Usó herramientas pero reparó antes de diagnosticar' });
+        criteria.push({ name: rt('exam.crit.before', 'Diagnóstico antes de intervenir'), ok: false, detail: rt('exam.crit.beforeBad', 'Usó herramientas pero reparó antes de diagnosticar') });
     } else {
-        criteria.push({ name: 'Diagnóstico antes de intervenir', ok: false, detail: 'No hay evidencia de diagnóstico previo' });
+        criteria.push({ name: rt('exam.crit.before', 'Diagnóstico antes de intervenir'), ok: false, detail: rt('exam.crit.beforeNone', 'No hay evidencia de diagnóstico previo') });
     }
 
     // 13. Verificación posterior
@@ -448,9 +467,9 @@ function evaluateExamCriteria(start, end) {
     const recheckedAfter = firstFixIdx >= 0 && acts.some((a, i) => i > firstFixIdx && isDiagAction(a));
     if (usedSnapshot || recheckedAfter) {
         points += 6;
-        criteria.push({ name: 'Verificación posterior a la reparación', ok: true, detail: usedSnapshot ? 'Usó snapshots' : 'Revisó métricas después' });
+        criteria.push({ name: rt('exam.crit.verify', 'Verificación posterior a la reparación'), ok: true, detail: usedSnapshot ? rt('exam.crit.verifySnapshots', 'Usó snapshots') : rt('exam.crit.verifyMetrics', 'Revisó métricas después') });
     } else {
-        criteria.push({ name: 'Verificación posterior a la reparación', ok: false, detail: 'No verificó el resultado' });
+        criteria.push({ name: rt('exam.crit.verify', 'Verificación posterior a la reparación'), ok: false, detail: rt('exam.crit.verifyBad', 'No verificó el resultado') });
     }
 
     // 13b. Presupuesto
@@ -458,17 +477,17 @@ function evaluateExamCriteria(start, end) {
         maxPoints += 6;
         if (osState.budgetSpent > 0) {
             points += 6;
-            criteria.push({ name: 'Gestión del presupuesto', ok: true, detail: `Gastó $${osState.budgetSpent} de $${osState.budgetTotal} sin excederlo` });
+            criteria.push({ name: rt('exam.crit.budget', 'Gestión del presupuesto'), ok: true, detail: rtf('exam.crit.budgetOk', { spent: osState.budgetSpent, total: osState.budgetTotal }, `Gastó $${osState.budgetSpent}`) });
         } else {
-            criteria.push({ name: 'Gestión del presupuesto', ok: false, detail: 'No invirtió el presupuesto en ninguna mejora' });
+            criteria.push({ name: rt('exam.crit.budget', 'Gestión del presupuesto'), ok: false, detail: rt('exam.crit.budgetNo', 'No invirtió el presupuesto') });
         }
         if (osState.currentScenario === 12) {
             maxPoints += 8;
             if (end.ram >= 1536) {
                 points += 8;
-                criteria.push({ name: 'Priorizó la mejora de mayor impacto (RAM)', ok: true, detail: `RAM ${start.ram} → ${end.ram} MB` });
+                criteria.push({ name: rt('exam.crit.budgetRam', 'Priorizó la mejora de mayor impacto (RAM)'), ok: true, detail: rtf('exam.crit.budgetRamOk', { start: start.ram, end: end.ram }, `RAM ${start.ram} → ${end.ram} MB`) });
             } else {
-                criteria.push({ name: 'Priorizó la mejora de mayor impacto (RAM)', ok: false, detail: 'El cuello de botella principal era la RAM' });
+                criteria.push({ name: rt('exam.crit.budgetRam', 'Priorizó la mejora de mayor impacto (RAM)'), ok: false, detail: rt('exam.crit.budgetRamBad', 'El cuello de botella principal era la RAM') });
             }
         }
     }
@@ -482,12 +501,12 @@ function evaluateExamCriteria(start, end) {
     const defraggedSSD = acts.some(a => a.type === 'defrag_ssd_attempt');
     if (!killedEssential && !defraggedSSD) {
         points += 6;
-        criteria.push({ name: 'Evitar acciones incorrectas', ok: true, detail: 'Sin intervenciones dañinas detectadas' });
+        criteria.push({ name: rt('exam.crit.wrong', 'Evitar acciones incorrectas'), ok: true, detail: rt('exam.crit.wrongOk', 'Sin intervenciones dañinas detectadas') });
     } else {
         const details = [];
-        if (killedEssential) details.push('cerró antivirus');
-        if (defraggedSSD) details.push('intentó desfragmentar SSD');
-        criteria.push({ name: 'Evitar acciones incorrectas', ok: false, detail: details.join(', ') });
+        if (killedEssential) details.push(rt('exam.crit.wrongKilled', 'cerró antivirus'));
+        if (defraggedSSD) details.push(rt('exam.crit.wrongSSD', 'intentó desfragmentar SSD'));
+        criteria.push({ name: rt('exam.crit.wrong', 'Evitar acciones incorrectas'), ok: false, detail: details.join(', ') });
     }
 
     // 15. Eficiencia
@@ -496,12 +515,12 @@ function evaluateExamCriteria(start, end) {
     const actionCount = osState.examActions.filter(a => a.type !== 'session_restored').length;
     if (actionCount >= 3 && actionCount <= 25 && durationSec < 600) {
         points += 5;
-        criteria.push({ name: 'Eficiencia de la intervención', ok: true, detail: `${actionCount} acciones en ${Math.floor(durationSec/60)}m ${durationSec%60}s` });
+        criteria.push({ name: rt('exam.crit.eff', 'Eficiencia de la intervención'), ok: true, detail: rtf('exam.crit.effOk', { actions: actionCount, minutes: Math.floor(durationSec/60), seconds: durationSec%60 }, `${actionCount} acciones`) });
     } else if (actionCount > 0) {
         points += 2;
-        criteria.push({ name: 'Eficiencia de la intervención', ok: true, detail: `${actionCount} acciones (revisar si hubo pasos de más)` });
+        criteria.push({ name: rt('exam.crit.eff', 'Eficiencia de la intervención'), ok: true, detail: rtf('exam.crit.effSome', { actions: actionCount }, `${actionCount} acciones`) });
     } else {
-        criteria.push({ name: 'Eficiencia de la intervención', ok: false, detail: 'Sin acciones registradas' });
+        criteria.push({ name: rt('exam.crit.eff', 'Eficiencia de la intervención'), ok: false, detail: rt('exam.crit.effNone', 'Sin acciones registradas') });
     }
 
     if (maxPoints === 0) maxPoints = 20;
@@ -511,7 +530,7 @@ function evaluateExamCriteria(start, end) {
 
 function endExamMode() {
     if (!osState.examMode) {
-        alert('No hay examen en curso.');
+        alert(rt('alert.examNoRunning', 'No hay examen en curso.'));
         return;
     }
     const endSnap = captureExamSnapshot();
@@ -522,11 +541,11 @@ function endExamMode() {
     clearExamSession();
     osState.examScore = evaluation.pct;
 
-    const config = scenarioConfigs[osState.currentScenario];
+    const config = localizedScenario(osState.currentScenario);
     const obsEl = document.getElementById('exam-observations');
     const observations = (obsEl ? obsEl.value : '').trim();
     const report = {
-        studentName: osState.examStudentName || 'Sin nombre',
+        studentName: osState.examStudentName || rt('exam.report.noName', 'Sin nombre'),
         students: osState.examStudents.slice(),
         course: osState.examCourse || '',
         division: osState.examDivision || '',
@@ -561,8 +580,13 @@ function endExamMode() {
     document.getElementById('btn-end-exam').classList.add('hidden');
     document.getElementById('btn-cancel-exam').classList.add('hidden');
     setExamFormLocked(false);
-    document.getElementById('exam-status-text').innerText =
-        `EXAMEN FINALIZADO · ${report.isGroup ? 'Grupo' : 'Alumno'}: ${report.studentName} · ${report.course ? report.course + ' ' + report.division + ' · ' : ''}Nota: ${evaluation.pct}% · Tiempo: ${formatExamTimer(durationSec)}`;
+    document.getElementById('exam-status-text').innerText = rtf('ui.examStatusFinished', {
+        mode: report.isGroup ? rt('exam.report.group', 'Grupo') : rt('exam.report.student', 'Alumno'),
+        name: report.studentName,
+        course: report.course ? report.course + ' ' + report.division + ' · ' : '',
+        score: evaluation.pct,
+        time: formatExamTimer(durationSec)
+    }, 'EXAMEN FINALIZADO.');
 
     const mission = document.getElementById('mission-panel');
     if (mission) mission.classList.remove('hidden');
@@ -573,25 +597,34 @@ function endExamMode() {
     panel.classList.remove('hidden');
     let html = '';
     if (report.course || report.division) {
-        html += `<p class="font-bold text-indigo-900 mb-0.5">Curso/División: ${report.course || '—'} ${report.division || ''}</p>`;
+        html += `<p class="font-bold text-indigo-900 mb-0.5">${rtf('ui.resultsCourseDivision', { course: report.course || '—', division: report.division || '' }, 'Curso/División')}</p>`;
     }
-    html += `<p class="font-bold text-indigo-900 mb-0.5">${report.isGroup ? 'Grupo (' + report.students.length + ')' : 'Alumno'}: ${report.studentName}</p>`;
+    html += `<p class="font-bold text-indigo-900 mb-0.5">${report.isGroup ? rtf('ui.resultsGroup', { n: report.students.length }, 'Grupo') : rt('ui.resultsStudent', 'Alumno')}: ${report.studentName}</p>`;
     if (report.isGroup) {
         html += `<p class="text-[10px] text-gray-700 mb-1">• ${report.students.join('<br>• ')}</p>`;
     }
-    html += `<p class="font-bold text-indigo-900 mb-1">Resultado: ${evaluation.pct}% — ${evaluation.pct >= 80 ? 'Excelente' : evaluation.pct >= 60 ? 'Aprobado' : evaluation.pct >= 40 ? 'Regular' : 'Insuficiente'}</p>`;
+    const resultLabel = evaluation.pct >= 80 ? rt('ui.resultsExcellent', 'Excelente')
+        : evaluation.pct >= 60 ? rt('ui.resultsPassed', 'Aprobado')
+        : evaluation.pct >= 40 ? rt('ui.resultsRegular', 'Regular')
+        : rt('ui.resultsInsufficient', 'Insuficiente');
+    html += `<p class="font-bold text-indigo-900 mb-1">${rtf('ui.resultsResult', { pct: evaluation.pct, label: resultLabel }, `Resultado: ${evaluation.pct}%`)}</p>`;
     if (observations) {
-        html += `<p class="text-[10px] mt-1 border-t pt-1"><b>Observaciones:</b> ${observations.replace(/</g, '&lt;')}</p>`;
+        html += `<p class="text-[10px] mt-1 border-t pt-1"><b>${rt('ui.resultsObservations', 'Observaciones:')}</b> ${observations.replace(/</g, '&lt;')}</p>`;
     }
-    html += `<table class="w-full text-[10px]"><thead><tr class="bg-gray-100"><th class="p-0.5 text-left">Criterio</th><th class="p-0.5">Estado</th><th class="p-0.5 text-left">Detalle</th></tr></thead><tbody>`;
+    html += `<table class="w-full text-[10px]"><thead><tr class="bg-gray-100"><th class="p-0.5 text-left">${rt('ui.resultsCriteria', 'Criterio')}</th><th class="p-0.5">${rt('ui.resultsState', 'Estado')}</th><th class="p-0.5 text-left">${rt('ui.resultsDetail', 'Detalle')}</th></tr></thead><tbody>`;
     evaluation.criteria.forEach(c => {
         html += `<tr class="border-b"><td class="p-0.5">${c.name}</td><td class="p-0.5 text-center">${c.ok ? '✓' : '✗'}</td><td class="p-0.5">${c.detail}</td></tr>`;
     });
     html += `</tbody></table>`;
-    html += `<p class="mt-1 text-[10px] text-gray-600">Acciones registradas: ${osState.examActions.length} · Duración: ${Math.floor(durationSec/60)}m ${durationSec%60}s</p>`;
+    html += `<p class="mt-1 text-[10px] text-gray-600">${rtf('exam.report.actions', { n: osState.examActions.length }, 'Acciones')} · ${rt('exam.report.duration', 'Duración:')} ${Math.floor(durationSec/60)}m ${durationSec%60}s</p>`;
     panel.innerHTML = html;
 
-    logAuditEvent(`[EXAMEN] Finalizado. Puntuación: ${evaluation.pct}% (${evaluation.points}/${evaluation.maxPoints}). Duración: ${durationSec}s.`);
+    logAuditEvent(rtf('log.examFinished', {
+        score: evaluation.pct,
+        points: evaluation.points,
+        max: evaluation.maxPoints,
+        duration: durationSec
+    }, 'Examen finalizado.'));
 }
 
 function syncExamObservations() {
@@ -605,43 +638,43 @@ function syncExamObservations() {
 function exportExamReport() {
     const r = osState.examReport;
     if (!r) {
-        alert('No hay informe de examen. Iniciá y finalizá un examen primero.');
+        alert(rt('alert.examNoReport', 'No hay informe de examen.'));
         return;
     }
     syncExamObservations();
     const safeName = (r.isGroup ? 'Grupo_' + (r.course || '') + (r.division || '') : (r.students && r.students[0]) || r.studentName || 'SinNombre')
         .replace(/[\\/:*?"<>|]/g, '_').substring(0, 40);
     let text = `═══════════════════════════════════════\n`;
-    text += `  INFORME DE EVALUACIÓN — RetroOS 3.0\n`;
+    text += `  ${rt('exam.report.title', 'RetroOS 3.0 — Informe de Evaluación')}\n`;
     text += `═══════════════════════════════════════\n\n`;
-    text += `Curso: ${r.course || '—'}\n`;
-    text += `División: ${r.division || '—'}\n`;
-    text += `Modalidad: ${r.isGroup ? 'Grupal (' + (r.students ? r.students.length : 0) + ' alumnos)' : 'Individual'}\n`;
-    text += `Alumno(s):\n`;
+    text += `${rt('exam.report.course', 'Curso:')} ${r.course || '—'}\n`;
+    text += `${rt('exam.report.division', 'División:')} ${r.division || '—'}\n`;
+    text += `${rt('exam.report.modality', 'Modalidad:')} ${r.isGroup ? rtf('exam.report.groupMode', { n: (r.students ? r.students.length : 0) }, 'Grupal') : rt('exam.report.individual', 'Individual')}\n`;
+    text += `${rt('exam.report.students', 'Alumno(s):')}\n`;
     (r.students || [r.studentName]).forEach(s => { text += `  • ${s}\n`; });
-    text += `\nEscenario: ${r.scenarioName}\n`;
-    text += `Nivel de dificultad: ${r.difficulty}\n`;
-    text += `Inicio: ${r.startTime}\n`;
-    text += `Fin: ${r.endTime}\n`;
-    text += `Duración: ${Math.floor(r.durationSec/60)}m ${r.durationSec%60}s\n`;
-    text += `Salud inicial: ${r.startHealth}% → Salud final: ${r.endHealth}%\n`;
-    text += `PUNTUACIÓN: ${r.score}% (${r.points}/${r.maxPoints} puntos)\n`;
+    text += `\n${rt('exam.report.scenario', 'Escenario:')} ${r.scenarioName}\n`;
+    text += `${rt('exam.report.difficulty', 'Nivel de dificultad:')} ${r.difficulty}\n`;
+    text += `${rt('exam.report.start', 'Inicio:')} ${r.startTime}\n`;
+    text += `${rt('exam.report.end', 'Fin:')} ${r.endTime}\n`;
+    text += `${rt('exam.report.duration', 'Duración:')} ${Math.floor(r.durationSec/60)}m ${r.durationSec%60}s\n`;
+    text += `${rt('exam.report.txtStartHealth', 'Salud inicial:')} ${r.startHealth}% → ${rt('exam.report.txtFinalHealth', 'Salud final:')} ${r.endHealth}%\n`;
+    text += `${rt('exam.report.score', 'PUNTUACIÓN:')} ${r.score}% (${r.points}/${r.maxPoints} ${rt('exam.report.txtPoints', 'puntos')})\n`;
     if (r.isGroup) {
-        text += `\nNota: la puntuación es compartida por todos los integrantes del grupo.\n`;
+        text += `\n${rt('exam.report.shared', 'La puntuación es compartida por el grupo.')}\n`;
     }
-    text += `\n--- Observaciones del docente ---\n`;
-    text += (r.observations ? r.observations : '(sin observaciones)') + '\n';
-    text += `\n--- Criterios ---\n`;
+    text += `\n${rt('exam.report.txtObservations', '--- Observaciones del docente ---')}\n`;
+    text += (r.observations ? r.observations : rt('exam.report.noObservations', '(sin observaciones)')) + '\n';
+    text += `\n${rt('exam.report.txtCriteria', '--- Criterios ---')}\n`;
     r.criteria.forEach(c => {
         text += `${c.ok ? '[OK]' : '[X]'} ${c.name}: ${c.detail}\n`;
     });
-    text += `\n--- Acciones registradas (${r.actionsCount}) ---\n`;
+    text += `\n${rtf('exam.report.txtActions', { n: r.actionsCount }, 'Acciones registradas')}\n`;
     r.actions.forEach(a => { text += `[${a.time}] ${a.msg}\n`; });
-    text += `\n--- Estado inicial ---\n`;
+    text += `\n${rt('exam.report.txtInitial', '--- Estado inicial ---')}\n`;
     text += JSON.stringify(r.startSnap, null, 2);
-    text += `\n\n--- Estado final ---\n`;
+    text += `\n\n${rt('exam.report.txtFinal', '--- Estado final ---')}\n`;
     text += JSON.stringify(r.endSnap, null, 2);
-    text += `\n\nGenerado por RetroOS 3.0\n`;
+    text += `\n\n${rt('exam.report.txtGenerated', 'Generado por RetroOS 3.0')}\n`;
 
     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -650,13 +683,13 @@ function exportExamReport() {
     a.download = `RetroOS_Informe_${safeName}_Esc${r.scenario}_${Date.now()}.txt`;
     a.click();
     URL.revokeObjectURL(url);
-    logAuditEvent(`[EXAMEN] Informe exportado (.txt) — ${r.studentName}`);
+    logAuditEvent(rtf('log.exportTxt', { name: r.studentName }, 'Informe TXT exportado.'));
 }
 
 function exportExamCSV() {
     const r = osState.examReport;
     if (!r) {
-        alert('No hay informe de examen. Iniciá y finalizá un examen primero.');
+        alert(rt('alert.examNoReport', 'No hay informe de examen.'));
         return;
     }
     syncExamObservations();
@@ -665,7 +698,7 @@ function exportExamCSV() {
     let csv = 'Campo,Valor\n';
     csv += `Curso,"${(r.course || '').replace(/"/g, '""')}"\n`;
     csv += `Division,"${(r.division || '').replace(/"/g, '""')}"\n`;
-    csv += `Modalidad,${r.isGroup ? 'Grupal' : 'Individual'}\n`;
+    csv += `Modalidad,${r.isGroup ? rt('exam.report.csvGroup', 'Grupal') : rt('exam.report.csvIndividual', 'Individual')}\n`;
     csv += `Alumnos,"${(r.studentName || '').replace(/"/g, '""')}"\n`;
     (r.students || []).forEach((s, i) => {
         csv += `Alumno_${i + 1},"${s.replace(/"/g, '""')}"\n`;
@@ -679,7 +712,7 @@ function exportExamCSV() {
     csv += `Observaciones,"${(r.observations || '').replace(/"/g, '""')}"\n\n`;
     csv += 'Criterio,Cumplido,Detalle\n';
     r.criteria.forEach(c => {
-        csv += `"${c.name}",${c.ok ? 'SI' : 'NO'},"${c.detail.replace(/"/g, '""')}"\n`;
+        csv += `"${c.name}",${c.ok ? rt('ui.statusYes', 'SI') : rt('ui.statusNo', 'NO')},"${c.detail.replace(/"/g, '""')}"\n`;
     });
     csv += `\nMetrica,Inicial,Final\n`;
     csv += `Salud,${r.startHealth}%,${r.endHealth}%\n`;
@@ -699,17 +732,17 @@ function exportExamCSV() {
     a.download = `RetroOS_Evaluacion_${safeName}_Esc${r.scenario}_${Date.now()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    logAuditEvent(`[EXAMEN] Informe CSV exportado — Alumno: ${r.studentName}`);
+    logAuditEvent(rtf('log.exportCsv', { name: r.studentName }, 'Informe CSV exportado.'));
 }
 
 function exportExamPDF() {
     const r = osState.examReport;
     if (!r) {
-        alert('No hay informe de examen. Iniciá y finalizá un examen primero.');
+        alert(rt('alert.examNoReport', 'No hay informe de examen.'));
         return;
     }
     if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
-        alert('No se pudo cargar la librería PDF. Verificá la conexión a internet o usá Exportar Informe (.txt).');
+        alert(rt('alert.pdfUnavailable', 'No se pudo cargar la librería PDF.'));
         return;
     }
     syncExamObservations();
@@ -745,23 +778,23 @@ function exportExamPDF() {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
-    doc.text('RetroOS 3.0 — Informe de Evaluación', margin, 14);
+    doc.text(rt('exam.report.title', 'RetroOS 3.0 — Informe de Evaluación'), margin, 14);
     y = 30;
     doc.setTextColor(0, 0, 0);
 
-    addLine('Datos del examen', { size: 12, style: 'bold' });
+    addLine(rt('exam.report.data', 'Datos del examen'), { size: 12, style: 'bold' });
     addGap(1);
-    addLine(`Curso: ${r.course || '—'}    División: ${r.division || '—'}`);
-    addLine(`Modalidad: ${r.isGroup ? 'Grupal (' + (r.students ? r.students.length : 0) + ' alumnos)' : 'Individual'}`);
-    addLine(`Alumno(s): ${r.studentName || '—'}`);
+    addLine(`${rt('exam.report.course', 'Curso:')} ${r.course || '—'}    ${rt('exam.report.division', 'División:')} ${r.division || '—'}`);
+    addLine(`${rt('exam.report.modality', 'Modalidad:')} ${r.isGroup ? rtf('exam.report.groupMode', { n: (r.students ? r.students.length : 0) }, 'Grupal') : rt('exam.report.individual', 'Individual')}`);
+    addLine(`${rt('exam.report.students', 'Alumno(s):')} ${r.studentName || '—'}`);
     if (r.students && r.students.length > 1) {
         r.students.forEach((s, i) => addLine(`  ${i + 1}. ${s}`, { size: 9 }));
     }
-    addLine(`Escenario: ${r.scenarioName}`);
-    addLine(`Nivel de dificultad: ${r.difficulty}`);
-    addLine(`Inicio: ${r.startTime}`);
-    addLine(`Fin: ${r.endTime}`);
-    addLine(`Duración: ${Math.floor(r.durationSec / 60)}m ${r.durationSec % 60}s`);
+    addLine(`${rt('exam.report.scenario', 'Escenario:')} ${r.scenarioName}`);
+    addLine(`${rt('exam.report.difficulty', 'Nivel de dificultad:')} ${r.difficulty}`);
+    addLine(`${rt('exam.report.start', 'Inicio:')} ${r.startTime}`);
+    addLine(`${rt('exam.report.end', 'Fin:')} ${r.endTime}`);
+    addLine(`${rt('exam.report.duration', 'Duración:')} ${Math.floor(r.durationSec / 60)}m ${r.durationSec % 60}s`);
     addGap(2);
 
     ensureSpace(18);
@@ -771,20 +804,26 @@ function exportExamPDF() {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text(`PUNTUACIÓN: ${r.score}%  (${r.points}/${r.maxPoints} puntos)  —  Salud ${r.startHealth}% → ${r.endHealth}%`, margin + 3, y + 3.5);
+    doc.text(rtf('exam.report.scoreLine', {
+        score: r.score,
+        points: r.points,
+        max: r.maxPoints,
+        start: r.startHealth,
+        end: r.endHealth
+    }, `PUNTUACIÓN: ${r.score}%`), margin + 3, y + 3.5);
     doc.setTextColor(0, 0, 0);
     y += 16;
 
     if (r.isGroup) {
-        addLine('La puntuación es compartida por todos los integrantes del grupo.', { size: 9, style: 'italic' });
+        addLine(rt('exam.report.shared', 'La puntuación es compartida por el grupo.'), { size: 9, style: 'italic' });
         addGap(2);
     }
 
-    addLine('Observaciones del docente', { size: 11, style: 'bold' });
-    addLine(r.observations || '(sin observaciones)', { size: 9 });
+    addLine(rt('exam.report.observations', 'Observaciones del docente'), { size: 11, style: 'bold' });
+    addLine(r.observations || rt('exam.report.noObservations', '(sin observaciones)'), { size: 9 });
     addGap(3);
 
-    addLine('Criterios de evaluación', { size: 11, style: 'bold' });
+    addLine(rt('exam.report.criteria', 'Criterios de evaluación'), { size: 11, style: 'bold' });
     addGap(1);
     (r.criteria || []).forEach(c => {
         const mark = c.ok ? '[OK]' : '[X]';
@@ -792,10 +831,10 @@ function exportExamPDF() {
     });
     addGap(3);
 
-    addLine(`Acciones registradas (${r.actionsCount || 0})`, { size: 11, style: 'bold' });
+    addLine(rtf('exam.report.actions', { n: r.actionsCount || 0 }, 'Acciones registradas'), { size: 11, style: 'bold' });
     addGap(1);
     if (!r.actions || r.actions.length === 0) {
-        addLine('(ninguna)', { size: 9 });
+        addLine(rt('exam.report.none', '(ninguna)'), { size: 9 });
     } else {
         r.actions.forEach(a => {
             addLine(`[${a.time}] ${a.msg}`, { size: 8, lh: 4.5 });
@@ -806,17 +845,20 @@ function exportExamPDF() {
     ensureSpace(10);
     doc.setFontSize(8);
     doc.setTextColor(100);
-    doc.text(`Generado por RetroOS 3.0 — ${new Date().toLocaleString()}`, margin, 290);
+    doc.text(rtf('exam.report.generated', { date: new Date().toLocaleString() }, 'Generado por RetroOS 3.0'), margin, 290);
 
     const safeName = (r.isGroup ? 'Grupo_' + (r.course || '') + (r.division || '') : (r.students && r.students[0]) || r.studentName || 'SinNombre')
         .replace(/[\\/:*?"<>|]/g, '_').substring(0, 40);
     doc.save(`RetroOS_Informe_${safeName}_Esc${r.scenario}_${Date.now()}.pdf`);
-    logAuditEvent(`[EXAMEN] Informe PDF exportado — ${r.studentName}`);
+    logAuditEvent(rtf('log.exportPdf', { name: r.studentName }, 'Informe PDF exportado.'));
 }
 
+let currentHelpTab = 'alumno';
+
 function showHelpTab(tab) {
+    currentHelpTab = tab;
     const body = document.getElementById('help-body');
-    if (body) body.innerHTML = helpContent[tab] || '';
+    if (body) body.innerHTML = rt('help.' + tab, helpContent[tab] || '');
     ['alumno', 'docente', 'herramientas', 'escenarios'].forEach(t => {
         const btn = document.getElementById('help-tab-' + t);
         if (!btn) return;
@@ -827,7 +869,7 @@ function showHelpTab(tab) {
 
 function exportHelpPDF() {
     if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
-        alert('No se pudo cargar la librería PDF. Verificá la conexión a internet.');
+        alert(rt('alert.pdfUnavailableSimple', 'No se pudo cargar la librería PDF.'));
         return;
     }
     const { jsPDF } = window.jspdf || window;
@@ -851,22 +893,22 @@ function exportHelpPDF() {
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
-    doc.text('RetroOS 3.0 — Manual de Uso y Diagnóstico', margin, 13);
+    doc.text(rt('exam.report.manualTitle', 'RetroOS 3.0 — Manual de Uso y Diagnóstico'), margin, 13);
     y = 28;
     doc.setTextColor(0, 0, 0);
 
     const sections = [
-        { key: 'alumno', title: '1. Guía para Alumnos' },
-        { key: 'docente', title: '2. Guía para Docentes' },
-        { key: 'herramientas', title: '3. Herramientas del Sistema' },
-        { key: 'escenarios', title: '4. Escenarios Didácticos (1 a 12)' }
+        { key: 'alumno', titleKey: 'exam.report.manualS1', fallback: '1. Guía para Alumnos' },
+        { key: 'docente', titleKey: 'exam.report.manualS2', fallback: '2. Guía para Docentes' },
+        { key: 'herramientas', titleKey: 'exam.report.manualS3', fallback: '3. Herramientas del Sistema' },
+        { key: 'escenarios', titleKey: 'exam.report.manualS4', fallback: '4. Escenarios Didácticos (1 a 12)' }
     ];
 
     sections.forEach(s => {
         ensure(12);
-        line(s.title, 12, 'bold');
+        line(rt(s.titleKey, s.fallback), 12, 'bold');
         y += 2;
-        const html = helpContent[s.key] || '';
+        const html = rt('help.' + s.key, helpContent[s.key] || '');
         const tmp = document.createElement('div');
         tmp.innerHTML = html;
         const plain = (tmp.innerText || tmp.textContent || '').replace(/\n{3,}/g, '\n\n').trim();
@@ -877,8 +919,8 @@ function exportHelpPDF() {
     ensure(10);
     doc.setFontSize(8);
     doc.setTextColor(100);
-    doc.text('Generado por RetroOS 3.0 — ' + new Date().toLocaleString(), margin, 290);
+    doc.text(rtf('exam.report.generated', { date: new Date().toLocaleString() }, 'Generado por RetroOS 3.0'), margin, 290);
     doc.save('RetroOS_3_0_Manual_de_uso.pdf');
-    logAuditEvent('[AYUDA] Manual de uso exportado a PDF.');
+    logAuditEvent(rt('log.helpPdf', 'Manual de uso exportado a PDF.'));
 }
 

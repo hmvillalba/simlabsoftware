@@ -14,13 +14,28 @@ function setTextIfChanged(id, val) {
     if (el && el.innerText !== String(val)) el.innerText = String(val);
 }
 
+/** Pinta solo el Panel de Misión (nombre, síntomas y pauta) del escenario. */
+function renderScenarioPanel(num) {
+    const config = localizedScenario(num);
+    if (!config) return;
+
+    const tag = document.getElementById('active-scenario-tag');
+    if (tag) tag.innerText = config.name;
+
+    const symptomsUl = document.getElementById('symptoms-list');
+    if (symptomsUl) symptomsUl.innerHTML = config.symptoms.map(s => `<li>${s}</li>`).join('');
+
+    const correctionOl = document.getElementById('correction-steps-list');
+    if (correctionOl) correctionOl.innerHTML = config.idealSteps.map(step => `<li>${step}</li>`).join('');
+}
+
 function loadScenario(num) {
     if (osState.examMode) {
-        alert('Escenarios bloqueados durante el examen.\nUsá «Cancelar / Desbloquear» o «Finalizar y Evaluar» para cambiar de escenario.');
+        alert(rt('alert.scenarioLocked', 'Escenarios bloqueados durante el examen.'));
         return;
     }
     osState.currentScenario = num;
-    const config = scenarioConfigs[num];
+    const config = localizedScenario(num);
     if (!config) return;
     
     invalidateSimulationCaches();
@@ -91,13 +106,7 @@ function loadScenario(num) {
         });
     }
 
-    document.getElementById('active-scenario-tag').innerText = config.name;
-    
-    const symptomsUl = document.getElementById('symptoms-list');
-    symptomsUl.innerHTML = config.symptoms.map(s => `<li>${s}</li>`).join('');
-
-    const correctionOl = document.getElementById('correction-steps-list');
-    correctionOl.innerHTML = config.idealSteps.map(step => `<li>${step}</li>`).join('');
+    renderScenarioPanel(num);
 
     for (let i = 1; i <= 12; i++) {
         const btn = document.getElementById(`btn-scen-${i}`);
@@ -110,11 +119,18 @@ function loadScenario(num) {
         }
     }
 
-    logAuditEvent(`Docente cambió al Escenario ${config.name}.`);
+    logAuditEvent(rtf('log.scenarioChanged', { name: config.name }, `Docente cambió al Escenario ${config.name}.`));
     renderDefragGrid();
     renderMsconfigList();
     updateSystemState();
-    logAuditEvent(`Estado inicial: RAM ${osState.totalRAM} MB | Disco ${osState.diskType} | Frag ${osState.fragmentation}% | Temp ${osState.cpuTemp}°C | Boot ~${osState.bootTimeSec}s | Free ${osState.freeDiskGB} GB`);
+    logAuditEvent(rtf('log.scenarioInitial', {
+        ram: osState.totalRAM,
+        disk: osState.diskType,
+        frag: osState.fragmentation,
+        temp: osState.cpuTemp,
+        boot: osState.bootTimeSec,
+        free: osState.freeDiskGB
+    }, 'Estado inicial del escenario.'));
 }
 
 function injectFault(type) {
@@ -122,19 +138,19 @@ function injectFault(type) {
     invalidateSimulationCaches();
     if (type === 'overheat') {
         osState.cpuTemp = Math.min(105, osState.cpuTemp + 35);
-        logAuditEvent(`[FALLO INYECTADO DOCENTE] Se provocó sobrecalentamiento de CPU (+35°C). Temp actual: ${osState.cpuTemp}°C.`);
+        logAuditEvent(rtf('log.faultOverheat', { temp: osState.cpuTemp }, 'Fallo inyectado: sobrecalentamiento.'));
     } else if (type === 'fillswap') {
         osState.injectedSwapMB += 450;
-        logAuditEvent(`[FALLO INYECTADO DOCENTE] Se saturó la Memoria Virtual / Swap (+450 MB ficticios).`);
+        logAuditEvent(rt('log.faultSwap', 'Fallo inyectado: swap saturado.'));
     } else if (type === 'launchheavy') {
         const heavyId = 'heavy_' + Date.now();
         osState.extraHeavyApps.push({ id: heavyId, name: 'RenderEngine3D_Benchmark.exe', pid: Math.floor(Math.random()*800)+300, ram: 380, cpu: 40, net: 0 });
-        logAuditEvent(`[FALLO INYECTADO DOCENTE] Se lanzó proceso pesado 'RenderEngine3D_Benchmark.exe' (380 MB RAM, 40% CPU).`);
+        logAuditEvent(rt('log.faultHeavy', 'Fallo inyectado: proceso pesado.'));
     } else if (type === 'malware') {
         const malwareApp = osState.startupApps.find(a => a.id === 'startup-malware');
         if (malwareApp) {
             malwareApp.enabled = true;
-            logAuditEvent(`[FALLO INYECTADO DOCENTE] Se inyectó / activó proceso 'svchost_fake.exe' (CryptoMiner).`);
+            logAuditEvent(rt('log.faultMalware', 'Fallo inyectado: malware.'));
             renderMsconfigList();
         }
     }
@@ -145,9 +161,9 @@ function runHeavyGame(name, ram) {
     const gameId = 'game_' + Date.now();
     invalidateSimulationCaches();
     osState.extraHeavyApps.push({ id: gameId, name: `${name}.exe`, pid: Math.floor(Math.random()*800)+300, ram: ram, cpu: 35, net: 0 });
-    logAuditEvent(`[JUEGOS] Se ejecutó ${name} consumiendo ${ram} MB de RAM extra.`);
+    logAuditEvent(rtf('log.gameRun', { name, ram }, `Se ejecutó ${name}.`));
     updateSystemState();
-    alert(`Iniciando ${name}... Observa el impacto en la RAM/Swap en el Panel de Misión y Administrador de Tareas.`);
+    alert(rtf('alert.gameStarted', { name }, `Iniciando ${name}...`));
 }
 
 function toggleCorrectionGuide() {
@@ -155,11 +171,11 @@ function toggleCorrectionGuide() {
     const btn = document.getElementById('btn-toggle-correction');
     if (panel.classList.contains('hidden')) {
         panel.classList.remove('hidden');
-        btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Ocultar Pauta';
-        logAuditEvent('Docente desplegó la Pauta de Corrección.');
+        btn.innerHTML = `<i class="fa-solid fa-eye-slash"></i> ${rt('ui.correctionHide', 'Ocultar Pauta')}`;
+        logAuditEvent(rt('log.correctionShown', 'Docente desplegó la Pauta de Corrección.'));
     } else {
         panel.classList.add('hidden');
-        btn.innerHTML = '<i class="fa-solid fa-book-bookmark"></i> Ver Pauta';
+        btn.innerHTML = `<i class="fa-solid fa-book-bookmark"></i> ${rt('ui.correctionShow', 'Ver Pauta')}`;
     }
 }
 
@@ -173,15 +189,15 @@ function navBrowser(page) {
         urlBar.value = "http://www.buscadorsuper.com";
         frame.innerHTML = `
             <div class="text-center space-y-3">
-                <h1 class="text-2xl font-bold text-blue-900">BuscadorSúper 98</h1>
+                <h1 class="text-2xl font-bold text-blue-900">${rt('ui.browserHomeTitle', 'BuscadorSúper 98')}</h1>
                 <div class="flex justify-center gap-1">
-                    <input type="text" placeholder="Buscar en la web..." class="border p-1 text-xs w-64">
-                    <button onclick="navBrowser('search')" class="win98-btn px-2 font-bold">Buscar</button>
+                    <input type="text" placeholder="${rt('ui.browserSearchPlaceholder', 'Buscar en la web...')}" class="border p-1 text-xs w-64">
+                    <button onclick="navBrowser('search')" class="win98-btn px-2 font-bold">${rt('ui.browserSearchBtn', 'Buscar')}</button>
                 </div>
                 <div class="text-left text-xs space-y-1 mt-4">
-                    <p class="font-bold border-b">Sitios Recomendados:</p>
-                    <p><a href="#" onclick="navBrowser('news')" class="text-blue-700 underline">Noticias de Tecnología de los 90s</a></p>
-                    <p><a href="#" onclick="navBrowser('heavy')" class="text-blue-700 underline font-bold text-red-700">Portal Web 3D/HD (Carga masiva en RAM +350MB)</a></p>
+                    <p class="font-bold border-b">${rt('ui.browserSites', 'Sitios Recomendados:')}</p>
+                    <p><a href="#" onclick="navBrowser('news')" class="text-blue-700 underline">${rt('ui.browserNewsLink', 'Noticias de Tecnología')}</a></p>
+                    <p><a href="#" onclick="navBrowser('heavy')" class="text-blue-700 underline font-bold text-red-700">${rt('ui.browserHeavyLink', 'Portal Web pesado')}</a></p>
                 </div>
             </div>
         `;
@@ -189,21 +205,21 @@ function navBrowser(page) {
         osState.browserExtraRAM = 50;
         urlBar.value = "http://www.buscadorsuper.com/noticias";
         frame.innerHTML = `
-            <h2 class="font-bold text-sm text-blue-900 border-b mb-2">Portal de Noticias Tech</h2>
-            <p class="mb-2">¡Nuevos módulos de SDRAM prometen eliminar los problemas de intercambio de páginas (swapping)!</p>
-            <p class="text-gray-600">Recomendación: Monitoree el Administrador de Tareas si nota ralentizaciones.</p>
+            <h2 class="font-bold text-sm text-blue-900 border-b mb-2">${rt('ui.browserNewsTitle', 'Portal de Noticias Tech')}</h2>
+            <p class="mb-2">${rt('ui.browserNewsBody1', '')}</p>
+            <p class="text-gray-600">${rt('ui.browserNewsBody2', '')}</p>
         `;
     } else if (page === 'heavy') {
         osState.browserExtraRAM = 350;
         urlBar.value = "http://www.webpesada.com/portal";
         frame.innerHTML = `
             <div class="p-3 bg-red-100 border border-red-400 text-red-900 rounded space-y-2">
-                <p class="font-bold text-sm"><i class="fa-solid fa-triangle-exclamation"></i> ¡Cargando portal web pesado con scripts y render 3D!</p>
-                <p class="text-xs">Esta pestaña está consumiendo <span class="font-bold">350 MB de RAM adicionales</span>.</p>
-                <p class="text-[10px] text-gray-700">Comprueba cómo el sistema empieza a paginar en disco (Swap/PageFaults) si no tienes suficiente memoria física.</p>
+                <p class="font-bold text-sm"><i class="fa-solid fa-triangle-exclamation"></i> ${rt('ui.browserHeavyTitle', '')}</p>
+                <p class="text-xs">${rtf('ui.browserHeavyBody1', { mb: 350 }, '')}</p>
+                <p class="text-[10px] text-gray-700">${rt('ui.browserHeavyBody2', '')}</p>
             </div>
         `;
-        logAuditEvent("Navegador Web cargó un portal pesado (+350 MB de consumo).");
+        logAuditEvent(rt('log.browserHeavy', 'Navegador Web cargó un portal pesado.'));
     }
     updateSystemState();
 }
@@ -230,10 +246,10 @@ function calcEqual() {
 function controlPlayer(action) {
     const btn = document.getElementById('btn-player-play');
     if (action === 'play') {
-        btn.innerHTML = '<i class="fa-solid fa-pause"></i> Pausa';
-        logAuditEvent('Reproductor MP3 en reproducción.');
+        btn.innerHTML = `<i class="fa-solid fa-pause"></i> ${rt('ui.playerPause', 'Pausa')}`;
+        logAuditEvent(rt('log.playerPlaying', 'Reproductor MP3 en reproducción.'));
     } else if (action === 'pause') {
-        btn.innerHTML = '<i class="fa-solid fa-play"></i> Play';
+        btn.innerHTML = `<i class="fa-solid fa-play"></i> ${rt('ui.playerPlay', 'Play')}`;
     }
 }
 
@@ -272,12 +288,19 @@ function updateSystemState() {
     setTextIfChanged('metric-free', `${osState.freeDiskGB} GB`);
     setTextIfChanged('metric-temp', `${Math.round(osState.cpuTemp)}°C${osState.thermalThrottle ? ' ⚠' : ''}`);
     setTextIfChanged('metric-boot', `${osState.bootTimeSec}s`);
-    setTextIfChanged('metric-net', osState.networkOk ? `${netApps} KB/s` : 'SIN CONEXIÓN');
+    setTextIfChanged('metric-net', osState.networkOk ? `${netApps} KB/s` : rt('ui.statusNoConnection', 'SIN CONEXIÓN'));
 
     setTextIfChanged('tray-ram-label', `RAM: ${ramPct}%`);
-    setTextIfChanged('prop-ram-text', `RAM: ${osState.totalRAM} MB SDRAM`);
-    setTextIfChanged('prop-frag-text', `Disco ${osState.diskType}: Frag ${Math.round(osState.fragmentation)}% | Libre ${osState.freeDiskGB} GB`);
-    setTextIfChanged('prop-temp-text', `Temperatura: ${Math.round(osState.cpuTemp)}°C | Refrigeración: ${osState.coolingEfficiency}%`);
+    setTextIfChanged('prop-ram-text', rtf('ui.propsRam', { mb: osState.totalRAM }, `RAM: ${osState.totalRAM} MB SDRAM`));
+    setTextIfChanged('prop-frag-text', rtf('ui.propsDisk', {
+        type: osState.diskType,
+        frag: Math.round(osState.fragmentation),
+        free: osState.freeDiskGB
+    }, `Disco ${osState.diskType}: Frag ${Math.round(osState.fragmentation)}% | Libre ${osState.freeDiskGB} GB`));
+    setTextIfChanged('prop-temp-text', rtf('ui.propsTemp', {
+        temp: Math.round(osState.cpuTemp),
+        cool: osState.coolingEfficiency
+    }, `Temperatura: ${Math.round(osState.cpuTemp)}°C | Refrigeración: ${osState.coolingEfficiency}%`));
 
     const startupCPU = osState.startupApps.filter(a => a.enabled).reduce((sum, a) => sum + a.cpu, 0);
     const appsCPU = osState.openWindows.reduce((sum, id) => sum + (appCatalog[id] ? appCatalog[id].cpu : 0), 0);
@@ -330,7 +353,11 @@ function renderVirtualMemoryGrids(usedRAM, totalRAM, overflowRAM) {
     swapContainer.innerHTML = '';
 
     setTextIfChanged('vmem-ram-capacity', `${totalRAM} MB`);
-    setTextIfChanged('vmem-ram-usage-text', `${usedRAM} MB Usados (${usedRAMFrames}/${totalRAMFrames} Marcos)`);
+    setTextIfChanged('vmem-ram-usage-text', rtf('ui.vmemUsed', {
+        used: usedRAM,
+        usedFrames: usedRAMFrames,
+        totalFrames: totalRAMFrames
+    }, `${usedRAM} MB Usados (${usedRAMFrames}/${totalRAMFrames} Marcos)`));
 
     const ramFrag = document.createDocumentFragment();
     for (let i = 0; i < totalRAMFrames; i++) {
@@ -340,21 +367,21 @@ function renderVirtualMemoryGrids(usedRAM, totalRAM, overflowRAM) {
         if (i < usedRAMFrames) {
             if (isSwapping && i >= totalRAMFrames - 2) {
                 frame.className += "bg-red-500 text-white animate-pulse";
-                frame.innerText = "FAULT";
+                frame.innerText = rt('ui.vmemFaultFrame', 'FAULT');
             } else {
                 frame.className += "bg-blue-600 text-white";
                 frame.innerText = `PAG_${i}`;
             }
         } else {
             frame.className += "bg-gray-200 text-gray-500";
-            frame.innerText = `LIBRE`;
+            frame.innerText = rt('ui.vmemFreeFrame', 'LIBRE');
         }
         ramFrag.appendChild(frame);
     }
     ramContainer.appendChild(ramFrag);
 
     setTextIfChanged('pf-count', pf);
-    setTextIfChanged('vmem-swap-usage-text', `${overflowRAM} MB Paginados a Disco`);
+    setTextIfChanged('vmem-swap-usage-text', rtf('ui.vmemPaged', { mb: overflowRAM }, `${overflowRAM} MB Paginados a Disco`));
 
     const swapFrag = document.createDocumentFragment();
     for (let j = 0; j < 24; j++) {
@@ -388,33 +415,33 @@ function renderDefragGrid() {
 function runDefragmentation() {
     if (osState.defragging) return;
     if (osState.diskType === 'SSD') {
-        alert('La unidad simulada es SSD. No se recomienda desfragmentarla como un HDD; utiliza la optimización/TRIM del sistema.');
-        logAuditEvent('[DIAGNÓSTICO] Se evitó desfragmentar una unidad SSD; la acción apropiada sería optimización/TRIM.', { type: 'defrag_ssd_attempt', via: 'gui' });
+        alert(rt('alert.ssdDefrag', 'La unidad simulada es SSD. No se recomienda desfragmentarla.'));
+        logAuditEvent(rt('log.ssdDefragAvoided', 'Se evitó desfragmentar una unidad SSD.'), { type: 'defrag_ssd_attempt', via: 'gui' });
         return;
     }
     osState.defragging = true;
     const initialFragmentation = osState.fragmentation;
-    document.getElementById('defrag-pct-text').innerText = "Procesando...";
-    logAuditEvent(`Inició desfragmentación de HDD con ${Math.round(initialFragmentation)}% de fragmentación.`);
+    document.getElementById('defrag-pct-text').innerText = rt('ui.defragProcessing', 'Procesando...');
+    logAuditEvent(rtf('log.defragStart', { frag: Math.round(initialFragmentation) }, 'Inició desfragmentación de HDD.'));
     setTimeout(() => {
         osState.defragging = false;
         osState.fragmentation = Math.min(8, Math.round(initialFragmentation * 0.05));
         if (initialFragmentation > 40) {
             osState.bootTimeSec = Math.max(25, Math.round(osState.bootTimeSec * 0.85));
         }
-        document.getElementById('defrag-pct-text').innerText = `${osState.fragmentation}% (Optimizado)`;
+        document.getElementById('defrag-pct-text').innerText = rtf('ui.defragOptimized', { pct: osState.fragmentation }, `${osState.fragmentation}% (Optimizado)`);
         renderDefragGrid();
         playSound('done');
-        logAuditEvent(`Desfragmentación de HDD completada. Fragmentación: ${Math.round(initialFragmentation)}% → ${osState.fragmentation}%.`, { type: 'defrag_done' });
+        logAuditEvent(rtf('log.defragDone', { from: Math.round(initialFragmentation), to: osState.fragmentation }, 'Desfragmentación completada.'), { type: 'defrag_done' });
         updateSystemState();
     }, 3000);
 }
 
 function scanJunkFiles() {
     const log = document.getElementById('cleaner-log');
-    log.innerHTML += `<p class="text-yellow-300">&gt; Encontrados ${osState.junkFilesMB} MB de temporales y archivos basura.</p>`;
-    log.innerHTML += `<p class="text-gray-400">&gt; Espacio libre actual estimado: ${osState.freeDiskGB} GB</p>`;
-    logAuditEvent("Escaneo de archivos temporales finalizado.");
+    log.innerHTML += `<p class="text-yellow-300">&gt; ${rtf('ui.cleanerFound', { mb: osState.junkFilesMB }, 'Temporales encontrados.')}</p>`;
+    log.innerHTML += `<p class="text-gray-400">&gt; ${rtf('ui.cleanerFree', { gb: osState.freeDiskGB }, 'Espacio libre estimado.')}</p>`;
+    logAuditEvent(rt('log.cleanerScan', 'Escaneo de archivos temporales finalizado.'));
 }
 
 function cleanJunkFiles() {
@@ -422,9 +449,9 @@ function cleanJunkFiles() {
     const recovered = osState.junkFilesMB;
     osState.junkFilesMB = 0;
     osState.diskUsedGB = Math.max(5, osState.diskUsedGB - (recovered / 1024));
-    log.innerHTML += `<p class="text-emerald-400">&gt; Limpieza finalizada. Recuperados ~${recovered} MB.</p>`;
+    log.innerHTML += `<p class="text-emerald-400">&gt; ${rtf('ui.cleanerDone', { mb: recovered }, 'Limpieza finalizada.')}</p>`;
     playSound('ok');
-    logAuditEvent(`Archivos temporales eliminados por el alumno. Recuperados ${recovered} MB.`, { type: 'clean_junk' });
+    logAuditEvent(rtf('log.cleanerDone', { mb: recovered }, 'Archivos temporales eliminados.'), { type: 'clean_junk' });
     updateSystemState();
 }
 
@@ -455,7 +482,10 @@ function toggleStartup(id) {
         } else if (item.enabled && (id === 'startup-heavy' || id === 'startup-cloud')) {
             osState.bootTimeSec += 18;
         }
-        logAuditEvent(`MSConfig: Configuración de inicio modificada para '${item.name}' (Habilitado: ${item.enabled}).`, { type: 'msconfig_toggle', id: item.id, enabled: item.enabled });
+        logAuditEvent(rtf('log.msconfigToggle', {
+            name: item.name,
+            state: item.enabled ? rt('ui.on', 'Habilitado') : rt('ui.off', 'Deshabilitado')
+        }, `MSConfig: ${item.name}`), { type: 'msconfig_toggle', id: item.id, enabled: item.enabled });
         updateSystemState();
     }
 }
@@ -487,7 +517,7 @@ function renderProcessListTable() {
             <td class="p-1">${app.ram} MB</td>
             <td class="p-1">${app.cpu}%</td>
             <td class="p-1">${app.net} KB/s</td>
-            <td class="p-1 text-right"><button onclick="killStartupApp('${app.id}')" class="win98-btn px-1 text-[10px] text-red-700 font-bold">Terminar</button></td>
+            <td class="p-1 text-right"><button onclick="killStartupApp('${app.id}')" class="win98-btn px-1 text-[10px] text-red-700 font-bold">${rt('ui.taskmgrEnd', 'Terminar')}</button></td>
         `;
         frag.appendChild(tr);
     });
@@ -506,7 +536,7 @@ function renderProcessListTable() {
                 <td class="p-1 font-bold">${currentRam} MB</td>
                 <td class="p-1">${app.cpu}%</td>
                 <td class="p-1">0 KB/s</td>
-                <td class="p-1 text-right"><button onclick="closeWindow('${winId}')" class="win98-btn px-1 text-[10px] text-red-700 font-bold">Cerrar</button></td>
+                <td class="p-1 text-right"><button onclick="closeWindow('${winId}')" class="win98-btn px-1 text-[10px] text-red-700 font-bold">${rt('ui.taskmgrClose', 'Cerrar')}</button></td>
             `;
             frag.appendChild(tr);
         }
@@ -521,7 +551,7 @@ function renderProcessListTable() {
             <td class="p-1 font-bold">${app.ram} MB</td>
             <td class="p-1">${app.cpu}%</td>
             <td class="p-1">${app.net} KB/s</td>
-            <td class="p-1 text-right"><button onclick="killExtraHeavyApp('${app.id}')" class="win98-btn px-1 text-[10px] text-red-700 font-bold">Terminar</button></td>
+            <td class="p-1 text-right"><button onclick="killExtraHeavyApp('${app.id}')" class="win98-btn px-1 text-[10px] text-red-700 font-bold">${rt('ui.taskmgrEnd', 'Terminar')}</button></td>
         `;
         frag.appendChild(tr);
     });
@@ -534,7 +564,7 @@ function killStartupApp(id) {
     if (app) {
         app.enabled = false;
         invalidateSimulationCaches();
-        logAuditEvent(`[ACCION ALUMNO] Finalizó proceso '${app.name}' (PID ${app.pid}) via Administrador de Tareas.`, { type: 'kill_process', id: app.id, pid: app.pid, via: 'taskmgr' });
+        logAuditEvent(rtf('log.killProcess', { name: app.name, pid: app.pid }, `Finalizó proceso '${app.name}'.`), { type: 'kill_process', id: app.id, pid: app.pid, via: 'taskmgr' });
         renderMsconfigList();
         updateSystemState();
     }
@@ -546,7 +576,7 @@ function killExtraHeavyApp(id) {
         const name = osState.extraHeavyApps[index].name;
         osState.extraHeavyApps.splice(index, 1);
         invalidateSimulationCaches();
-        logAuditEvent(`[ACCION ALUMNO] Finalizó proceso pesado '${name}' via Administrador de Tareas.`, { type: 'kill_heavy', name, via: 'taskmgr' });
+        logAuditEvent(rtf('log.killHeavy', { name }, `Finalizó proceso pesado '${name}'.`), { type: 'kill_heavy', name, via: 'taskmgr' });
         updateSystemState();
     }
 }
@@ -556,14 +586,18 @@ function tryPurchase(cost, label) {
     if (osState.budgetTotal > 0) {
         if (cost > osState.budgetRemaining) {
             playSound('error');
-            alert(`Presupuesto insuficiente.\n${label} cuesta $${cost} y solo quedan $${osState.budgetRemaining}.`);
-            logAuditEvent(`[ACCION ALUMNO] Compra rechazada por presupuesto: ${label} ($${cost}). Disponible: $${osState.budgetRemaining}.`, { type: 'purchase_rejected', label });
+            alert(rtf('alert.budgetInsufficient', { label, cost, remaining: osState.budgetRemaining }, 'Presupuesto insuficiente.'));
+            logAuditEvent(rtf('log.purchaseRejected', { label, cost, remaining: osState.budgetRemaining }, 'Compra rechazada por presupuesto.'), { type: 'purchase_rejected', label });
             return false;
         }
         osState.budgetRemaining -= cost;
     }
     osState.budgetSpent += cost;
-    logAuditEvent(`[ACCION ALUMNO] Compra realizada: ${label} ($${cost}).${osState.budgetTotal > 0 ? ' Presupuesto restante: $' + osState.budgetRemaining + '.' : ''}`);
+    logAuditEvent(rtf('log.purchase', {
+        label,
+        cost,
+        extra: osState.budgetTotal > 0 ? rtf('log.purchaseRemaining', { remaining: osState.budgetRemaining }, '') : ''
+    }, `Compra realizada: ${label}.`));
     return true;
 }
 
@@ -579,7 +613,7 @@ function setSystemRAM(mb) {
         osState.bootTimeSec = Math.max(35, Math.round(osState.bootTimeSec * 0.7));
     }
     playSound('ok');
-    logAuditEvent(`[ACCION ALUMNO] Hardware actualizado: Ampliación de RAM física a ${mb} MB.`, { type: 'ram_upgrade', mb });
+    logAuditEvent(rtf('log.ramUpgrade', { mb }, `RAM ampliada a ${mb} MB.`), { type: 'ram_upgrade', mb });
     updateSystemState();
     updateBudgetDisplay();
 }
@@ -591,10 +625,10 @@ function upgradeDisk(type) {
         osState.diskType = 'SSD';
         osState.fragmentation = Math.min(osState.fragmentation, 5);
         osState.bootTimeSec = Math.max(18, Math.round(osState.bootTimeSec * 0.45));
-        logAuditEvent(`[ACCION ALUMNO] Disco migrado a SSD. Fragmentación ya no es crítica. Tiempo de arranque reducido.`, { type: 'disk_upgrade', to: 'SSD' });
+        logAuditEvent(rt('log.diskSSD', 'Disco migrado a SSD.'), { type: 'disk_upgrade', to: 'SSD' });
     } else {
         osState.diskType = 'HDD';
-        logAuditEvent(`[ACCION ALUMNO] Disco configurado como HDD.`, { type: 'disk_upgrade', to: 'HDD' });
+        logAuditEvent(rt('log.diskHDD', 'Disco configurado como HDD.'), { type: 'disk_upgrade', to: 'HDD' });
     }
     playSound('ok');
     renderDefragGrid();
@@ -603,12 +637,15 @@ function upgradeDisk(type) {
 }
 
 function improveCooling() {
-    if (!tryPurchase(HW_PRICES.cooling, 'Mantenimiento de refrigeración')) return;
+    if (!tryPurchase(HW_PRICES.cooling, rt('ui.shopCooling', 'Mantenimiento de refrigeración'))) return;
     osState.coolingEfficiency = Math.min(100, osState.coolingEfficiency + 45);
     osState.cpuTemp = Math.max(42, osState.cpuTemp - 25);
     osState.thermalThrottle = false;
     playSound('ok');
-    logAuditEvent(`[ACCION ALUMNO] Mantenimiento de refrigeración realizado. Eficiencia: ${osState.coolingEfficiency}%. Temp: ${Math.round(osState.cpuTemp)}°C.`, { type: 'cooling' });
+    logAuditEvent(rtf('log.cooling', {
+        eff: osState.coolingEfficiency,
+        temp: Math.round(osState.cpuTemp)
+    }, 'Mantenimiento de refrigeración realizado.'), { type: 'cooling' });
     updateSystemState();
     updateBudgetDisplay();
 }
@@ -617,10 +654,14 @@ function updateBudgetDisplay() {
     const el = document.getElementById('budget-display');
     if (!el) return;
     if (osState.budgetTotal > 0) {
-        el.innerText = `Presupuesto: $${osState.budgetRemaining} disponibles de $${osState.budgetTotal} (gastado: $${osState.budgetSpent})`;
+        el.innerText = rtf('ui.budgetLimited', {
+            remaining: osState.budgetRemaining,
+            total: osState.budgetTotal,
+            spent: osState.budgetSpent
+        }, `Presupuesto: $${osState.budgetRemaining}.`);
         el.classList.toggle('text-red-700', osState.budgetRemaining < 15);
     } else {
-        el.innerText = `Sin límite de presupuesto en este escenario. Gastado: $${osState.budgetSpent}`;
+        el.innerText = rtf('ui.budgetUnlimited', { spent: osState.budgetSpent }, `Gastado: $${osState.budgetSpent}`);
         el.classList.remove('text-red-700');
     }
 }
@@ -629,7 +670,7 @@ function repairNetwork() {
     osState.networkOk = true;
     osState.networkIssue = null;
     playSound('ok');
-    logAuditEvent(`[ACCION ALUMNO] Red reparada (ipconfig /renew + DNS flush simulado).`, { type: 'network_fix' });
+    logAuditEvent(rt('log.networkFix', 'Red reparada.'), { type: 'network_fix' });
     updateSystemState();
 }
 
@@ -686,7 +727,7 @@ function handleCmdKey(e) {
         if (cmdLower === 'help') {
             const res = document.createElement('p');
             res.className = "text-gray-400";
-            res.innerText = "Comandos: help, tasklist, taskkill /PID <id>, taskkill /IM nombre.exe, kill nombre.exe, mem, defrag, systeminfo, ipconfig, netfix, coolfix, cls";
+            res.innerText = rt('cmd.help', 'Comandos disponibles.');
             output.appendChild(res);
         } else if (cmdLower === 'cls') {
             output.innerHTML = '';
@@ -714,7 +755,7 @@ function handleCmdKey(e) {
             if (startupTarget) {
                 startupTarget.enabled = false;
                 terminated = true;
-                logAuditEvent(`[ACCION ALUMNO] Proceso finalizado via CMD: ${startupTarget.name} (PID ${startupTarget.pid})`, { type: 'kill_process', id: startupTarget.id, pid: startupTarget.pid, via: 'cmd' });
+                logAuditEvent(rtf('log.killProcessCmd', { name: startupTarget.name, pid: startupTarget.pid }, 'Proceso finalizado via CMD.'), { type: 'kill_process', id: startupTarget.id, pid: startupTarget.pid, via: 'cmd' });
                 renderMsconfigList();
             }
             if (!terminated && targetPid !== null) {
@@ -723,62 +764,75 @@ function handleCmdKey(e) {
                     const name = osState.extraHeavyApps[heavyIdx].name;
                     osState.extraHeavyApps.splice(heavyIdx, 1);
                     terminated = true;
-                    logAuditEvent(`[ACCION ALUMNO] Proceso pesado finalizado via CMD: ${name}`, { type: 'kill_heavy', name, via: 'cmd' });
+                    logAuditEvent(rtf('log.killHeavyCmd', { name }, 'Proceso pesado finalizado via CMD.'), { type: 'kill_heavy', name, via: 'cmd' });
                 }
             }
             const res = document.createElement('p');
             res.className = terminated ? "text-green-400" : "text-red-400";
-            res.innerText = terminated ? `Proceso terminado exitosamente.` : `No se encontró el proceso especificado.`;
+            res.innerText = terminated ? rt('cmd.terminated', 'Proceso terminado exitosamente.') : rt('cmd.processNotFound', 'No se encontró el proceso especificado.');
             output.appendChild(res);
             invalidateSimulationCaches();
             updateSystemState();
         } else if (cmdLower === 'mem') {
             const res = document.createElement('p');
-            res.innerText = `Memoria Total: ${osState.totalRAM} MB | Swap activo: ${osState.swapping ? 'SI' : 'NO'} | Page Faults: ${osState.pageFaults}`;
+            res.innerText = rtf('cmd.mem', {
+                ram: osState.totalRAM,
+                swap: osState.swapping ? rt('ui.statusYes', 'SI') : rt('ui.statusNo', 'NO'),
+                pf: osState.pageFaults
+            }, `Memoria Total: ${osState.totalRAM} MB.`);
             output.appendChild(res);
         } else if (cmdLower === 'defrag') {
             runDefragmentation();
             const res = document.createElement('p');
             res.className = "text-yellow-300";
-            res.innerText = "Iniciando proceso de desfragmentación desde línea de comandos...";
+            res.innerText = rt('cmd.defragStart', 'Iniciando desfragmentación...');
             output.appendChild(res);
         } else if (cmdLower === 'systeminfo') {
             const res = document.createElement('p');
-            res.innerText = `RetroOS 3.0 | RAM: ${osState.totalRAM}MB | Disco: ${osState.diskType} (${osState.freeDiskGB}GB libres) | Temp CPU: ${Math.round(osState.cpuTemp)}°C | Red: ${osState.networkOk ? 'OK' : 'FALLO'}`;
+            res.innerText = rtf('cmd.systeminfo', {
+                ram: osState.totalRAM,
+                disk: osState.diskType,
+                free: osState.freeDiskGB,
+                temp: Math.round(osState.cpuTemp),
+                net: osState.networkOk ? rt('ui.statusOk', 'OK') : rt('ui.statusFail', 'FALLO')
+            }, 'RetroOS 3.0 | systeminfo');
             output.appendChild(res);
         } else if (cmdLower === 'ipconfig' || cmdLower === 'network') {
             const res = document.createElement('p');
             res.className = osState.networkOk ? 'text-green-300' : 'text-red-300';
             res.innerText = osState.networkOk ?
-                'Adaptador Ethernet: IP 192.168.1.45 | Máscara 255.255.255.0 | Puerta de enlace 192.168.1.1 | DNS 8.8.8.8 [OK]' :
-                `Fallo de red detectado: ${osState.networkIssue || 'desconectado'}. Use 'netfix' para reparar.`;
+                rt('cmd.ipconfigOk', 'Adaptador Ethernet [OK]') :
+                rtf('cmd.ipconfigFail', { issue: osState.networkIssue || rt('ui.disconnected', 'desconectado') }, 'Fallo de red detectado.');
             output.appendChild(res);
         } else if (cmdLower === 'netfix' || cmdLower === 'repair') {
             if (osState.networkOk) {
                 const res = document.createElement('p');
-                res.innerText = 'La red ya funciona correctamente.';
+                res.innerText = rt('cmd.netOk', 'La red ya funciona correctamente.');
                 output.appendChild(res);
             } else {
                 repairNetwork();
                 const res = document.createElement('p');
                 res.className = 'text-yellow-300';
-                res.innerText = 'Reparación de red completada (ipconfig /renew + flushdns). Conectividad restaurada.';
+                res.innerText = rt('cmd.netFixed', 'Reparación de red completada.');
                 output.appendChild(res);
             }
         } else if (cmdLower === 'coolfix' || cmdLower === 'cleanfan') {
             improveCooling();
             const res = document.createElement('p');
             res.className = 'text-yellow-300';
-            res.innerText = `Mantenimiento de refrigeración simulado. Eficiencia ahora: ${osState.coolingEfficiency}%. Temp: ${Math.round(osState.cpuTemp)}°C.`;
+            res.innerText = rtf('cmd.coolfix', {
+                eff: osState.coolingEfficiency,
+                temp: Math.round(osState.cpuTemp)
+            }, 'Mantenimiento de refrigeración simulado.');
             output.appendChild(res);
         } else {
             const res = document.createElement('p');
             res.className = "text-red-400";
-            res.innerText = `'${val}' no se reconoce como un comando interno o externo.`;
+            res.innerText = rtf('cmd.notFound', { cmd: val }, `'${val}' no se reconoce como un comando.`);
             output.appendChild(res);
         }
 
-        logAuditEvent(`[CMD] Comando ejecutado: "${val}"`, { type: 'cmd_exec', cmd: cmdLower, via: 'cmd' });
+        logAuditEvent(rtf('log.cmdExec', { cmd: val }, `[CMD] ${val}`), { type: 'cmd_exec', cmd: cmdLower, via: 'cmd' });
         input.value = '';
         output.scrollTop = output.scrollHeight;
     }
@@ -807,7 +861,7 @@ function updateHardwareMonitor(ramPct, cpuLoad, diskActivity) {
     setW('hwmon-cpu-bar', cpuLoad);
     set('hwmon-temp', Math.round(osState.cpuTemp) + '°C');
     setW('hwmon-temp-bar', Math.min(100, (osState.cpuTemp / 110) * 100));
-    const diskLabel = diskActivity > 70 ? 'Alto' : diskActivity > 35 ? 'Medio' : 'Bajo';
+    const diskLabel = diskActivity > 70 ? rt('ui.hwmonHigh', 'Alto') : diskActivity > 35 ? rt('ui.hwmonMedium', 'Medio') : rt('ui.hwmonLow', 'Bajo');
     set('hwmon-disk', diskLabel + ' (' + Math.round(diskActivity) + '%)');
     setW('hwmon-disk-bar', diskActivity);
     set('hwmon-cool', osState.coolingEfficiency + '%');
@@ -815,7 +869,7 @@ function updateHardwareMonitor(ramPct, cpuLoad, diskActivity) {
     set('hwmon-pf', String(osState.pageFaults));
     const thEl = document.getElementById('hwmon-throttle');
     if (thEl) {
-        thEl.innerText = osState.thermalThrottle ? 'SÍ ⚠' : 'No';
+        thEl.innerText = osState.thermalThrottle ? rt('ui.hwmonYes', 'SÍ ⚠') : rt('ui.hwmonNo', 'No');
         thEl.className = 'font-mono font-bold ' + (osState.thermalThrottle ? 'text-red-700' : 'text-green-700');
     }
 
@@ -856,27 +910,43 @@ function takeSnapshot() {
     osState.snapshots.push(snap);
     if (osState.snapshots.length > 4) osState.snapshots.shift();
     renderCompareTable();
-    logAuditEvent(`[MONITOR] Snapshot capturado (${snap.time}): RAM ${snap.ramUsed}/${snap.ram} MB, CPU ${snap.cpu}%, Temp ${snap.temp}°C, Salud ${snap.health}`, { type: 'snapshot' });
+    logAuditEvent(rtf('log.snapshot', {
+        time: snap.time,
+        ramUsed: snap.ramUsed,
+        ram: snap.ram,
+        cpu: snap.cpu,
+        temp: snap.temp,
+        health: snap.health
+    }, 'Snapshot capturado.'), { type: 'snapshot' });
 }
 
 function clearSnapshots() {
     osState.snapshots = [];
     renderCompareTable();
-    logAuditEvent('[MONITOR] Snapshots de comparación limpiados.');
+    logAuditEvent(rt('log.snapshotsCleared', 'Snapshots de comparación limpiados.'));
 }
 
 function renderCompareTable() {
     const container = document.getElementById('compare-table-container');
     if (!container) return;
     if (osState.snapshots.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 text-center py-2">Capturá un estado inicial y otro después de intervenir para comparar.</p>';
+        container.innerHTML = `<p class="text-gray-500 text-center py-2">${rt('ui.compareEmpty', 'Capturá un estado para comparar.')}</p>`;
         return;
     }
     if (osState.snapshots.length === 1) {
         const s = osState.snapshots[0];
-        container.innerHTML = `<p class="text-[11px] p-1">Estado capturado a las <b>${s.time}</b> — Salud: ${s.health}<br>
-            RAM ${s.ramUsed}/${s.ram} MB | CPU ${Math.round(s.cpu)}% | Temp ${s.temp}°C | Frag ${s.frag}% | Libre ${s.free} GB | Boot ${s.boot}s</p>
-            <p class="text-gray-500 text-center text-[10px]">Capturá un segundo estado para ver la comparación.</p>`;
+        container.innerHTML = `<p class="text-[11px] p-1">${rtf('ui.compareOne', {
+            time: s.time,
+            health: s.health,
+            ramUsed: s.ramUsed,
+            ram: s.ram,
+            cpu: Math.round(s.cpu),
+            temp: s.temp,
+            frag: s.frag,
+            free: s.free,
+            boot: s.boot
+        }, 'Estado capturado.')}</p>
+            <p class="text-gray-500 text-center text-[10px]">${rt('ui.compareSecond', 'Capturá un segundo estado.')}</p>`;
         return;
     }
     const a = osState.snapshots[0];
@@ -890,19 +960,39 @@ function renderCompareTable() {
     };
     container.innerHTML = `
         <table class="w-full text-left">
-            <thead><tr class="bg-gray-100"><th class="p-1">Métrica</th><th class="p-1">Antes (${a.time})</th><th class="p-1">Después (${b.time})</th><th class="p-1">Δ</th></tr></thead>
+            <thead><tr class="bg-gray-100"><th class="p-1">${rt('ui.compareMetric', 'Métrica')}</th><th class="p-1">${rtf('ui.compareBefore', { time: a.time }, 'Antes')}</th><th class="p-1">${rtf('ui.compareAfter', { time: b.time }, 'Después')}</th><th class="p-1">${rt('ui.compareDelta', 'Δ')}</th></tr></thead>
             <tbody>
-                <tr class="compare-row"><td>Salud</td><td>${a.health}</td><td>${b.health}</td><td>${diff(parseInt(a.health), parseInt(b.health), false)}</td></tr>
-                <tr class="compare-row"><td>RAM usada</td><td>${a.ramUsed} MB</td><td>${b.ramUsed} MB</td><td>${diff(a.ramUsed, b.ramUsed, true)}</td></tr>
-                <tr class="compare-row"><td>CPU</td><td>${Math.round(a.cpu)}%</td><td>${Math.round(b.cpu)}%</td><td>${diff(Math.round(a.cpu), Math.round(b.cpu), true)}</td></tr>
-                <tr class="compare-row"><td>Temperatura</td><td>${a.temp}°C</td><td>${b.temp}°C</td><td>${diff(a.temp, b.temp, true)}</td></tr>
-                <tr class="compare-row"><td>Fragmentación</td><td>${a.frag}%</td><td>${b.frag}%</td><td>${diff(a.frag, b.frag, true)}</td></tr>
-                <tr class="compare-row"><td>Espacio libre</td><td>${a.free} GB</td><td>${b.free} GB</td><td>${diff(a.free, b.free, false)}</td></tr>
-                <tr class="compare-row"><td>Tiempo arranque</td><td>${a.boot}s</td><td>${b.boot}s</td><td>${diff(a.boot, b.boot, true)}</td></tr>
-                <tr class="compare-row"><td>Page Faults</td><td>${a.pf}</td><td>${b.pf}</td><td>${diff(a.pf, b.pf, true)}</td></tr>
-                <tr class="compare-row"><td>Refrigeración</td><td>${a.cool}%</td><td>${b.cool}%</td><td>${diff(a.cool, b.cool, false)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.compareHealth', 'Salud')}</td><td>${a.health}</td><td>${b.health}</td><td>${diff(parseInt(a.health), parseInt(b.health), false)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.compareRamUsed', 'RAM usada')}</td><td>${a.ramUsed} MB</td><td>${b.ramUsed} MB</td><td>${diff(a.ramUsed, b.ramUsed, true)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.compareCpu', 'CPU')}</td><td>${Math.round(a.cpu)}%</td><td>${Math.round(b.cpu)}%</td><td>${diff(Math.round(a.cpu), Math.round(b.cpu), true)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.compareTemp', 'Temperatura')}</td><td>${a.temp}°C</td><td>${b.temp}°C</td><td>${diff(a.temp, b.temp, true)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.compareFrag', 'Fragmentación')}</td><td>${a.frag}%</td><td>${b.frag}%</td><td>${diff(a.frag, b.frag, true)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.compareFree', 'Espacio libre')}</td><td>${a.free} GB</td><td>${b.free} GB</td><td>${diff(a.free, b.free, false)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.compareBoot', 'Tiempo arranque')}</td><td>${a.boot}s</td><td>${b.boot}s</td><td>${diff(a.boot, b.boot, true)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.comparePf', 'Page Faults')}</td><td>${a.pf}</td><td>${b.pf}</td><td>${diff(a.pf, b.pf, true)}</td></tr>
+                <tr class="compare-row"><td>${rt('ui.compareCool', 'Refrigeración')}</td><td>${a.cool}%</td><td>${b.cool}%</td><td>${diff(a.cool, b.cool, false)}</td></tr>
             </tbody>
         </table>`;
+}
+
+/**
+ * Vuelve a pintar los textos de ejecución que ya están en pantalla cuando se
+ * cambia de idioma. Los números y el estado no se tocan.
+ */
+function refreshRuntimeTexts() {
+    renderScenarioPanel(osState.currentScenario);
+    invalidateSimulationCaches();
+    renderTaskbarTabs();
+    renderMsconfigList();
+    renderCompareTable();
+    updateBudgetDisplay();
+    updateSystemState();
+    renderExamStudentsList();
+    if (typeof currentHelpTab !== 'undefined') showHelpTab(currentHelpTab);
+    if (osState.examMode) showExamBanner(true);
+    document.querySelectorAll('.win-resize-grip').forEach(grip => {
+        grip.title = rt('ui.resizeGrip', 'Arrastrar para cambiar el tamaño');
+    });
 }
 
 

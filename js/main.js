@@ -7,6 +7,16 @@ function updateClock() {
 }
 
 window.onload = function() {
+    // Primero el idioma: deja el marcado fijo traducido antes de que el resto
+    // de los módulos pinte datos vivos en sus contenedores.
+    if (window.i18n) window.i18n.init();
+
+    // Al cambiar de idioma, los módulos repintan los textos de ejecución que ya
+    // están en pantalla (Panel de Misión, manual, monitor, tareas, examen).
+    document.addEventListener('sim:langchange', function () {
+        if (typeof refreshRuntimeTexts === 'function') refreshRuntimeTexts();
+    });
+
     installResizeGrips();
     loadScenario(1);
     renderDefragGrid();

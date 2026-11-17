@@ -58,13 +58,23 @@ Desarrollado como una aplicación web autónoma (Single Page Application) basada
 - No requiere conexión a internet, bases de datos ni servidores externos para funcionar.
 - Compatible con apertura directa mediante protocolo `file:///`.
 
+### 🌐 Interfaz multiidioma (es / ar / en / pt / fr)
+- La interfaz fija del simulador se traduce al instante desde el selector de idioma del menú **Inicio**, que recuerda la elección en `localStorage`.
+- Publica los mismos cinco idiomas que la portada: español neutro (`es`), español rioplatense (`ar`), inglés (`en`), portugués (`pt`) y francés (`fr`).
+- La landing abre el simulador con el idioma elegido mediante `index.html?lang=xx`; también se puede forzar desde la URL.
+- `lang/es.js` es la base y se genera desde el propio `index.html` con `node tools/i18n_extract.mjs --write`. Los demás diccionarios deben tener exactamente las mismas claves.
+- Los textos que arma JavaScript en ejecución viven en `lang/runtime/<idioma>.js` (alertas, Panel de Misión, manual, CMD, monitor, examen e informes). `js/runtime-dict.js` los aplana con el prefijo `rt.` y los mezcla con el diccionario fijo.
+- `npm run check` valida la landing, la interfaz fija y la paridad de los textos de ejecución en los cinco idiomas (`tools/test_i18n.mjs`).
+- Al cambiar de idioma se repintan los textos dinámicos visibles (Panel de Misión, manual, monitor, tareas y banner de examen). Los registros de auditoría y las líneas de CMD ya escritas conservan el idioma con el que se generaron.
+- **Alcance actual:** interfaz fija y textos de ejecución traducidos. Los informes exportados usan el idioma activo en el momento de generarlos.
+
 ---
 
 ## 🛠️ Tecnologías Utilizadas
 
 - **HTML5:** Estructura semántica y modular.
 - **Tailwind CSS & CSS3 Win98:** Motor de estilos retro con bordes biselados, paletas clásicas y diseño responsivo.
-- **JavaScript (Vanilla Modular):** Arquitectura cliente limpia dividida por responsabilidades (`state.js`, `audio.js`, `storage.js`, `windows.js`, `simulation.js`, `exam.js`, `main.js`).
+- **JavaScript (Vanilla Modular):** Arquitectura cliente limpia dividida por responsabilidades (`state.js`, `audio.js`, `storage.js`, `windows.js`, `simulation.js`, `exam.js`, `i18n.js`, `runtime-dict.js`, `main.js`).
 - **Web Audio API:** Síntesis sonora procedural en tiempo de ejecución.
 - **jsPDF:** Generación de informes vectoriales descargables en PDF en el navegador del usuario.
 - **FontAwesome:** Iconografía técnica y visual clásica de sistemas.

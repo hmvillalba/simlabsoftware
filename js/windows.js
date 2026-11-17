@@ -12,7 +12,7 @@ function openWindow(id) {
         if (!osState.openWindows.includes(id)) osState.openWindows.push(id);
         osState.minimizedWindows = osState.minimizedWindows.filter(w => w !== id);
         renderTaskbarTabs();
-        logAuditEvent(`Abrió ventana '${appCatalog[id] ? appCatalog[id].title : id}'.`, { type: 'open_window', id });
+        logAuditEvent(rtf('log.windowOpen', { name: appTitle(id) }, `Abrió ventana '${id}'.`), { type: 'open_window', id });
         if (typeof invalidateSimulationCaches === 'function') invalidateSimulationCaches();
         updateSystemState();
     }
@@ -25,7 +25,7 @@ function closeWindow(id) {
         playSound('click');
         osState.openWindows = osState.openWindows.filter(w => w !== id);
         renderTaskbarTabs();
-        logAuditEvent(`Cerró ventana '${appCatalog[id] ? appCatalog[id].title : id}'.`, { type: 'close_window', id });
+        logAuditEvent(rtf('log.windowClose', { name: appTitle(id) }, `Cerró ventana '${id}'.`), { type: 'close_window', id });
         updateSystemState();
     }
 }
@@ -37,7 +37,7 @@ function minimizeWindow(id) {
     if (!osState.openWindows.includes(id)) osState.openWindows.push(id);
     if (!osState.minimizedWindows.includes(id)) osState.minimizedWindows.push(id);
     renderTaskbarTabs();
-    logAuditEvent(`Minimizó ventana '${appCatalog[id] ? appCatalog[id].title : id}'. El proceso sigue activo.`);
+    logAuditEvent(rtf('log.windowMinimize', { name: appTitle(id) }, `Minimizó ventana '${id}'.`));
     updateSystemState();
 }
 
@@ -50,7 +50,7 @@ function renderTaskbarTabs() {
         if (meta) {
             const btn = document.createElement('button');
             btn.className = "win98-btn px-2 py-0.5 text-xs font-bold truncate max-w-[120px]";
-            btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.title}`;
+            btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${appTitle(winId)}`;
             if (osState.minimizedWindows.includes(winId)) btn.classList.add('opacity-60');
             btn.onclick = () => openWindow(winId);
             container.appendChild(btn);
@@ -74,7 +74,7 @@ function openAboutModal() {
     if (modal) {
         modal.classList.remove('hidden');
         playSound('click');
-        logAuditEvent('Abrió ventana Acerca de RetroOS 3.0.');
+        logAuditEvent(rt('log.aboutOpen', 'Abrió ventana Acerca de RetroOS 3.0.'));
     }
 }
 
@@ -110,7 +110,7 @@ function installResizeGrips() {
         if (win.querySelector(':scope > .win-resize-grip')) return;
         const grip = document.createElement('div');
         grip.className = 'win-resize-grip';
-        grip.title = 'Arrastrar para cambiar el tamaño';
+        grip.title = rt('ui.resizeGrip', 'Arrastrar para cambiar el tamaño');
         win.appendChild(grip);
     });
 }
