@@ -57,6 +57,10 @@ Desarrollado como una aplicación web autónoma (Single Page Application) basada
 - Almacenamiento local automático en el navegador mediante `localStorage`.
 - No requiere conexión a internet, bases de datos ni servidores externos para funcionar.
 - Compatible con apertura directa mediante protocolo `file:///`.
+- Todos los recursos son locales: Tailwind compilado (`assets/simulator.css` y `assets/landing.css`), FontAwesome (`assets/fontawesome/`), jsPDF (`assets/vendor/`) y las fuentes (`assets/fonts/`).
+- No hay CDNs, `@import` remotos ni fuentes de Google: con la red desconectada la interfaz, los iconos y la exportación a PDF siguen funcionando.
+- `npm run check` incluye `tools/test_offline.mjs`, que falla si vuelve a aparecer un recurso `http(s)://` en una página o CSS.
+- Si se cambian clases del simulador, regenerar el CSS con `npm run build:simulator`; el archivo compilado se versiona para no necesitar build al abrir el repo.
 
 ### 🌐 Interfaz multiidioma (es / ar / en / pt / fr)
 - La interfaz fija del simulador se traduce al instante desde el selector de idioma del menú **Inicio**, que recuerda la elección en `localStorage`.
@@ -73,11 +77,11 @@ Desarrollado como una aplicación web autónoma (Single Page Application) basada
 ## 🛠️ Tecnologías Utilizadas
 
 - **HTML5:** Estructura semántica y modular.
-- **Tailwind CSS & CSS3 Win98:** Motor de estilos retro con bordes biselados, paletas clásicas y diseño responsivo.
+- **Tailwind CSS & CSS3 Win98:** Motor de estilos retro con bordes biselados, paletas clásicas y diseño responsivo. Tailwind se compila localmente para la landing y para el simulador.
 - **JavaScript (Vanilla Modular):** Arquitectura cliente limpia dividida por responsabilidades (`state.js`, `audio.js`, `storage.js`, `windows.js`, `simulation.js`, `exam.js`, `i18n.js`, `runtime-dict.js`, `main.js`).
 - **Web Audio API:** Síntesis sonora procedural en tiempo de ejecución.
-- **jsPDF:** Generación de informes vectoriales descargables en PDF en el navegador del usuario.
-- **FontAwesome:** Iconografía técnica y visual clásica de sistemas.
+- **jsPDF:** Generación de informes vectoriales descargables en PDF. Se sirve desde `assets/vendor/` para funcionar sin internet.
+- **FontAwesome:** Iconografía técnica y visual clásica de sistemas, con copia local en `assets/fontawesome/`.
 
 ---
 

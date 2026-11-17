@@ -1,0 +1,12 @@
+/* src/simulator.css — punto de entrada del CSS del simulador.
+ *
+ * Se compila a assets/simulator.css con `npm run build:simulator`, usando
+ * tailwind.config.js (que mira index.html y js/). El resultado se versiona
+ * para que el simulador funcione offline y abierto con file://.
+ *
+ * css/win98.css NO se incluye acá: se carga aparte y define los estilos
+ * clásicos de Windows 98. Así Tailwind solo aporta base y utilidades.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

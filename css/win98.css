@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&family=Tahoma:wght@400;700&display=swap');
+/* css/win98.css — estilos clásicos del simulador.
+ *
+ * Sin @import remotos a propósito: el simulador debe funcionar sin internet
+ * y abierto con file://. La tipografía usa Tahoma/Segoe UI del sistema.
+ */
 
 * { box-sizing: border-box; }
 

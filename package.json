@@ -9,11 +9,14 @@
     "url": "https://github.com/hmvillalba/simlabsoftware.git"
   },
   "scripts": {
-    "build": "npm run build:landing",
+    "build": "npm run build:landing && npm run build:simulator",
     "build:landing": "npm run build:landing:css && node tools/build_landing.mjs",
     "build:landing:css": "tailwindcss -c landing/tailwind.config.js -i src/landing.css -o assets/landing.css --minify",
     "watch:landing:css": "tailwindcss -c landing/tailwind.config.js -i src/landing.css -o assets/landing.css --watch",
-    "check": "node tools/test_landing.mjs && node tools/test_i18n.mjs",
+    "build:simulator": "npm run build:simulator:css",
+    "build:simulator:css": "tailwindcss -c tailwind.config.js -i src/simulator.css -o assets/simulator.css --minify",
+    "watch:simulator:css": "tailwindcss -c tailwind.config.js -i src/simulator.css -o assets/simulator.css --watch",
+    "check": "node tools/test_offline.mjs && node tools/test_landing.mjs && node tools/test_i18n.mjs",
     "serve": "python -m http.server 8000"
   },
   "devDependencies": {

@@ -70,3 +70,15 @@ publish = "."
   for = "/assets/landing/*"
   [headers.values]
     Cache-Control = "public, max-age=604800"
+
+# CSS compilado del simulador y librerías vendorizadas (sin hash en el nombre:
+# caché semanal para poder actualizarlas sin quedar pegados a una versión vieja).
+[[headers]]
+  for = "/assets/simulator.css"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/assets/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
