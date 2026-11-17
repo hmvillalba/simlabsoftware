@@ -12,7 +12,8 @@
 //   - que las imágenes y el CSS referenciados existan en disco;
 //   - que la sección de apoyo/derechos esté en los cinco idiomas;
 //   - que el enlace al simulador apunte a un index.html que exista;
-//   - que sitemap.xml, robots.txt y netlify.toml sean coherentes con las páginas.
+//   - que sitemap.xml, robots.txt, netlify.toml y vercel.json sean coherentes
+//     con las páginas.
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
@@ -186,8 +187,8 @@ for (const lang of LANGS) {
 // --- 3. Rutas del sitio: portada en la raíz y simulador aparte ------------
 // El dominio abre la portada (/ redirige a /es/, español neutro y x-default) y el
 // simulador queda accesible sin pasar por ella en /index.html y en el alias
-// /simulador. La configuración vive en netlify.toml porque el sitio no tiene
-// servidor propio.
+// /simulador. La configuración vive en netlify.toml y vercel.json porque el
+// sitio no tiene servidor propio: cada plataforma necesita su propia regla.
 check('el simulador sigue en index.html', fs.existsSync(path.join(ROOT, 'index.html')));
 check('/es/ es el x-default de hreflang',
     LANGS.every(l => (pages[l] || '').includes('hreflang="x-default" href="' + SITE + '/es/"')));
@@ -217,6 +218,28 @@ if (fs.existsSync(netlifyFile)) {
     // la raíz y no un subdirectorio generado.
     check('publish es la raíz del repo', /^\s*publish\s*=\s*"\."/m.test(toml));
     check('el simulador conserva su URL propia', !redirects.some(r => r.from === '/index.html'));
+}
+
+// Vercel necesita la misma tabla de rutas: sin vercel.json sirve el index.html
+// de la raíz (el simulador) y la portada nunca aparece.
+const vercelFile = path.join(ROOT, 'vercel.json');
+check('vercel.json existe (rutas del despliegue)', fs.existsSync(vercelFile));
+if (fs.existsSync(vercelFile)) {
+    let config = null;
+    try { config = JSON.parse(fs.readFileSync(vercelFile, 'utf8')); }
+    catch (err) { check('vercel.json es JSON válido', false, err.message); }
+    if (config) {
+        check('vercel.json es JSON válido', true);
+        const redirects = Array.isArray(config.redirects) ? config.redirects : [];
+        check('Vercel: la raíz redirige a /es/',
+            redirects.some(r => r.source === '/' && r.destination === '/es/' && r.permanent === false));
+        for (const src of ['/simulador', '/simulador/']) {
+            check(`Vercel: el alias ${src} abre el simulador`,
+                redirects.some(r => r.source === src && r.destination === '/index.html' && r.permanent === false));
+        }
+        check('Vercel: el simulador conserva su URL propia',
+            !redirects.some(r => r.source === '/index.html'));
+    }
 }
 
 

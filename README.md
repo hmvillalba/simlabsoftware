@@ -4,7 +4,9 @@ Simulador interactivo y pedagógico de diagnóstico de sistemas operativos, arqu
 
 Desarrollado como una aplicación web autónoma (Single Page Application) basada en tecnologías web estándar, sin dependencias de servidor ni requerimientos de instalación compleja. Funciona tanto en servidores web como abriendo directamente el archivo en cualquier navegador en modo 100% offline.
 
-> 🌐 **Acceso en línea:** Puedes utilizar el simulador directamente desde tu navegador en **[https://simlabsoftware.netlify.app](https://simlabsoftware.netlify.app/)**
+> 🌐 **Acceso en línea:** la raíz abre la portada multilingüe (`/` → `/es/`) y el simulador queda en `/index.html` o en el alias `/simulador`.
+> - Netlify: **[https://simlabsoftware.netlify.app](https://simlabsoftware.netlify.app/)**
+> - Vercel: **[https://simlabsoftware.vercel.app](https://simlabsoftware.vercel.app/)**
 
 ---
 
@@ -88,8 +90,10 @@ Desarrollado como una aplicación web autónoma (Single Page Application) basada
 ## 💻 Acceso e Instalación
 
 ### Opción 1: En línea (Recomendada - Sin instalación)
-Disponible directamente en Netlify:
-👉 **[https://simlabsoftware.netlify.app](https://simlabsoftware.netlify.app/)**
+La raíz de cada despliegue redirige a `/es/` (portada). El simulador está en `/index.html` y en el alias `/simulador`. Las reglas viven en `netlify.toml` y `vercel.json`.
+
+- Netlify: **[https://simlabsoftware.netlify.app](https://simlabsoftware.netlify.app/)**
+- Vercel: **[https://simlabsoftware.vercel.app](https://simlabsoftware.vercel.app/)**
 
 ### Opción 2: Abrir localmente en el navegador
 1. Clona el repositorio:
