@@ -92,6 +92,8 @@ Desarrollado como una aplicación web autónoma (Single Page Application) basada
 ### Opción 1: En línea (Recomendada - Sin instalación)
 La raíz de cada despliegue redirige a `/es/` (portada). El simulador está en `/index.html` y en el alias `/simulador`. Las reglas viven en `netlify.toml` y `vercel.json`.
 
+En Vercel, `vercel.json` fija `outputDirectory: "."` porque el sitio se publica tal cual desde la raíz del repo: no existe una carpeta `public` generada. Si el panel del proyecto quedó con `public`, esa configuración la corrige.
+
 - Netlify: **[https://simlabsoftware.netlify.app](https://simlabsoftware.netlify.app/)**
 - Vercel: **[https://simlabsoftware.vercel.app](https://simlabsoftware.vercel.app/)**
 

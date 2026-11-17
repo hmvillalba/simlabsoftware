@@ -230,6 +230,8 @@ if (fs.existsSync(vercelFile)) {
     catch (err) { check('vercel.json es JSON válido', false, err.message); }
     if (config) {
         check('vercel.json es JSON válido', true);
+        check('Vercel: publica la raíz del repo (sin carpeta public)',
+            config.outputDirectory === '.');
         const redirects = Array.isArray(config.redirects) ? config.redirects : [];
         check('Vercel: la raíz redirige a /es/',
             redirects.some(r => r.source === '/' && r.destination === '/es/' && r.permanent === false));
