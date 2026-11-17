@@ -1,0 +1,5 @@
+# robots.txt — generado por tools/build_landing.mjs.
+User-agent: *
+Allow: /
+
+Sitemap: https://simlabsoftware.netlify.app/sitemap.xml

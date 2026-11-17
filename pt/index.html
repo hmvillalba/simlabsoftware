@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<!-- Generado por tools/build_landing.mjs — no editar a mano: cambiá landing/template.html. -->
+<html lang="pt" dir="ltr" class="scroll-smooth bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimLab Software — Simulador de diagnóstico de sistemas operacionais</title>
+    <meta name="description" content="Simulador educativo, gratuito e sem instalação: diagnostique um PC com falhas de RAM, CPU, disco, temperatura, malware e rede. 12 cenários, painel do professor e modo prova.">
+    <meta name="author" content="Hugo Martín Villalba">
+    <meta name="theme-color" content="#020617">
+    <link rel="canonical" href="https://simlabsoftware.netlify.app/pt/">
+        <link rel="alternate" hreflang="es" href="https://simlabsoftware.netlify.app/es/">
+    <link rel="alternate" hreflang="es-AR" href="https://simlabsoftware.netlify.app/ar/">
+    <link rel="alternate" hreflang="en" href="https://simlabsoftware.netlify.app/en/">
+    <link rel="alternate" hreflang="pt" href="https://simlabsoftware.netlify.app/pt/">
+    <link rel="alternate" hreflang="fr" href="https://simlabsoftware.netlify.app/fr/">
+    <link rel="alternate" hreflang="x-default" href="https://simlabsoftware.netlify.app/es/">
+    <!-- Metadatos para compartir en redes -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SimLab Software">
+    <meta property="og:title" content="SimLab Software — Simulador de diagnóstico de sistemas operacionais">
+    <meta property="og:description" content="Simulador educativo, gratuito e sem instalação: diagnostique um PC com falhas de RAM, CPU, disco, temperatura, malware e rede. 12 cenários, painel do professor e modo prova.">
+    <meta property="og:url" content="https://simlabsoftware.netlify.app/pt/">
+    <meta property="og:image" content="https://simlabsoftware.netlify.app/assets/landing/og.png">
+    <meta property="og:image:alt" content="Área de trabalho do simulador com as janelas do Gerenciador de Tarefas e do Monitor de Hardware abertas">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="pt_BR">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SimLab Software — Simulador de diagnóstico de sistemas operacionais">
+    <meta name="twitter:description" content="Simulador educativo, gratuito e sem instalação: diagnostique um PC com falhas de RAM, CPU, disco, temperatura, malware e rede. 12 cenários, painel do professor e modo prova.">
+    <meta name="twitter:image" content="https://simlabsoftware.netlify.app/assets/landing/og.png">
+    <!-- Datos estructurados: describe la app para los buscadores. -->
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "EducationalApplication",
+    "name": "SimLab Software",
+    "alternateName": "RetroOS 3.0",
+    "description": "Simulador educativo, gratuito e sem instalação: diagnostique um PC com falhas de RAM, CPU, disco, temperatura, malware e rede. 12 cenários, painel do professor e modo prova.",
+    "url": "https://simlabsoftware.netlify.app/pt/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web browser",
+    "inLanguage": [
+        "es",
+        "es-AR",
+        "en",
+        "pt",
+        "fr"
+    ],
+    "isAccessibleForFree": true,
+    "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+    },
+    "license": "https://opensource.org/licenses/MIT",
+    "author": {
+        "@type": "Person",
+        "name": "Hugo Martín Villalba"
+    },
+    "featureList": [
+        "Sistema operacional simulado",
+        "Métricas que reagem",
+        "Ferramentas de técnico",
+        "Pronto para a sala de aula"
+    ]
+}
+    </script>
+    <!-- Recursos locales, sin CDNs -->
+    <link rel="stylesheet" href="../assets/landing.css">
+    <link rel="stylesheet" href="../assets/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23020617'/%3E%3Crect x='6' y='8' width='20' height='14' rx='1.5' fill='none' stroke='%232dd4bf' stroke-width='2'/%3E%3Cpath d='M12 26h8M16 22v4' stroke='%232dd4bf' stroke-width='2'/%3E%3C/svg%3E">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Fondo de rejilla, como el escritorio del simulador. */
+        .bg-grid {
+            background-image: radial-gradient(circle, rgba(51, 65, 85, 0.55) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Respeta a quien pidió menos animaciones en su sistema. */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+        }
+
+        /* Selector de idioma del encabezado.
+         * Va en CSS propio y no con utilidades de Tailwind porque este bloque
+         * lo genera tools/build_landing.mjs: Tailwind solo escanea
+         * landing/template.html y no vería esas clases. */
+        .lang-nav {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 2px;
+            white-space: nowrap;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .lang-nav a,
+        .lang-nav span {
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .lang-nav a:hover {
+            background: #1e293b;
+            color: #fff;
+        }
+
+        .lang-nav [aria-current="page"] {
+            background: #1e293b;
+            color: #fff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body class="min-h-full bg-slate-950 text-slate-200 antialiased">
+
+    <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur">
+        <div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+            <a href="./index.html" class="flex items-center gap-2 text-slate-100">
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-teal-500/30 bg-teal-500/10 text-teal-300">
+                    <i class="fa-solid fa-desktop" aria-hidden="true"></i>
+                </span>
+                <span class="text-sm font-bold tracking-tight sm:text-base">SimLab Software</span>
+            </a>
+            <nav class="ml-auto hidden items-center gap-1 text-xs text-slate-300 lg:flex" aria-label="O que inclui">
+                <a href="#incluye" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">O que inclui</a>
+                <a href="#escenarios" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">Cenários</a>
+                <a href="#docentes" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">Para professores</a>
+                <a href="#empezar" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">Começar</a>
+                <a href="#apoyar" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">Apoiar</a>
+                <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer"
+                    class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white"><i class="fa-brands fa-github mr-1.5" aria-hidden="true"></i>Repositório</a>
+            </nav>
+            <nav class="lang-nav" aria-label="Idioma">
+                <a href="../es/index.html" hreflang="es" lang="es" title="Español neutro">ES</a>
+                <a href="../ar/index.html" hreflang="es-AR" lang="es-AR" title="Español (Argentina)">AR</a>
+                <a href="../en/index.html" hreflang="en" lang="en" title="English">EN</a>
+                <span lang="pt" aria-current="page">PT</span>
+                <a href="../fr/index.html" hreflang="fr" lang="fr" title="Français">FR</a>
+            </nav>
+            <a href="../index.html?lang=pt"
+                class="ml-1 inline-flex items-center gap-2 rounded-xl bg-teal-400 px-3 py-2 text-xs font-semibold text-slate-950 shadow-lg shadow-teal-500/20 transition hover:bg-teal-300">
+                <i class="fa-solid fa-play" aria-hidden="true"></i><span class="hidden sm:inline">Abrir simulador</span>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Portada -->
+        <section class="relative overflow-hidden">
+            <div class="bg-grid absolute inset-0 opacity-40" aria-hidden="true"></div>
+            <div class="relative mx-auto max-w-6xl px-4 py-14 sm:py-20">
+                <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-500/10 px-3 py-1 text-[11px] font-medium text-teal-200">
+                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>Grátis · Sem instalação · Funciona sem internet
+                </p>
+                <h1 class="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-5xl">Aprenda a diagnosticar computadores quebrando um pouco</h1>
+                <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">SimLab Software é um simulador de desktop com visual de Windows 98: os alunos abrem um PC com falhas, medem RAM, CPU, disco e temperatura, e corrigem o problema com ferramentas reais de manutenção.</p>
+                <div class="mt-7 flex flex-wrap items-center gap-3">
+                    <a href="../index.html?lang=pt"
+                        class="inline-flex items-center gap-2 rounded-xl bg-teal-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5 hover:bg-teal-300">
+                        <i class="fa-solid fa-play" aria-hidden="true"></i>Abrir simulador
+                    </a>
+                    <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:text-white">
+                        <i class="fa-brands fa-github" aria-hidden="true"></i>Ver o código
+                    </a>
+                </div>
+                <p class="mt-4 max-w-xl text-[11px] leading-relaxed text-slate-500">
+                    <i class="fa-solid fa-plug-circle-check mr-1" aria-hidden="true"></i>Roda no navegador e também abrindo o arquivo de uma pasta ou de um pendrive, sem servidor e sem conexão.
+                </p>
+                <figure class="mt-10 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60 shadow-2xl">
+                    <img src="../assets/landing/simulator-desktop.png" width="1440" height="900" loading="eager"
+                        alt="Área de trabalho do simulador com as janelas de processos, paginação e monitor de hardware" class="block w-full">
+                </figure>
+            </div>
+        </section>
+
+
+        <!-- Qué incluye -->
+        <section id="incluye" class="border-t border-slate-800/80 bg-slate-950 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">O que inclui</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">Um laboratório de manutenção completo dentro do navegador, sem licenças nem contas.</p>
+                <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <i class="fa-solid fa-memory text-lg text-teal-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Sistema operacional simulado</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Área de trabalho, janelas arrastáveis, barra de tarefas e sons retrô gerados ao vivo. Cada ação fica registrada em um log de auditoria.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <i class="fa-solid fa-gauge-high text-lg text-rose-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Métricas que reagem</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">RAM e swap com page faults e thrashing, temperatura e thermal throttling, fragmentação do disco, tráfego de rede e um índice de saúde do sistema.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <i class="fa-solid fa-screwdriver-wrench text-lg text-amber-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Ferramentas de técnico</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Gerenciador de Tarefas, Tabela de Páginas, Monitor de Hardware, Desfragmentador, Disk Cleaner, MSConfig, Loja de Hardware e console CMD.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <i class="fa-solid fa-chalkboard-user text-lg text-sky-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Pronto para a sala de aula</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">12 cenários com falhas, injetor de falhas para o professor, modo prova cronometrado e relatório exportado em PDF, CSV ou TXT.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Capturas -->
+        <section class="border-t border-slate-800/80 bg-slate-900/40 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Como é</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">Capturas do simulador real, no computador e no celular.</p>
+                <div class="mt-8 grid gap-6 lg:grid-cols-3">
+                    <figure class="lg:col-span-2">
+                        <img src="../assets/landing/simulator-desktop.png" width="1440" height="900" loading="lazy"
+                            alt="Área de trabalho do simulador com as janelas de processos, paginação e monitor de hardware" class="w-full rounded-2xl border border-slate-800 shadow-xl">
+                        <figcaption class="mt-2 text-[11px] text-slate-500">Área de trabalho do RetroOS 3.0 com o Gerenciador de Tarefas, a Tabela de Páginas e o Monitor de Hardware abertos.</figcaption>
+                    </figure>
+                    <figure class="mx-auto w-full max-w-[300px] lg:max-w-none">
+                        <img src="../assets/landing/simulator-mobile.png" width="390" height="844" loading="lazy"
+                            alt="Vista do simulador no celular com as janelas empilhadas" class="w-full rounded-2xl border border-slate-800 shadow-xl">
+                        <figcaption class="mt-2 text-[11px] text-slate-500">A mesma interface no celular: as janelas se reorganizam e a barra fica compacta.</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Escenarios de laboratorio -->
+        <section id="escenarios" class="border-t border-slate-800/80 bg-slate-950 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Doze falhas para diagnosticar</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">Cada cenário traz sintomas, métricas alteradas e um roteiro de correção esperado.</p>
+                <ol class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">01</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Caso completo</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Pouca RAM, malware, disco fragmentado e temperatura alta na mesma máquina.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">02</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Thrashing</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Page faults crescendo e swap lotado: falta memória física.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">03</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Segurança</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Um processo que imita o sistema consome CPU e rede em segundo plano.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">04</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Hardware e disco</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Fragmentação extrema, arquivos temporários e refrigeração deficiente.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">05</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Inicialização lenta</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Programas de inicialização demais: a máquina leva minutos para ficar utilizável.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">06</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">CPU saturada</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Um processo pesado domina o processador mesmo com RAM sobrando.</p>
+                    </li>
+                </ol>
+                <p class="mt-4 text-xs text-slate-500">
+                    <i class="fa-solid fa-circle-info mr-1" aria-hidden="true"></i>Os cenários 7 a 12 cobrem HDD contra SSD, superaquecimento, disco quase cheio, conflito de software, falhas de rede e uma atualização com orçamento limitado.
+                </p>
+                <div class="mt-6 overflow-x-auto">
+                    <table class="w-full min-w-[520px] border-collapse text-left text-xs text-slate-400">
+                        <caption class="mb-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Como um caso é resolvido</caption>
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-300">
+                                <th scope="col" class="py-2 pr-4 font-semibold">Sintoma</th>
+                                <th scope="col" class="py-2 pr-4 font-semibold">Ferramenta</th>
+                                <th scope="col" class="py-2 font-semibold">Correção</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-800/60">
+                                <td class="py-2 pr-4">O PC fica lento e o disco não para de trabalhar</td>
+                                <td class="py-2 pr-4 font-mono text-[11px] text-slate-300">Tabela de Páginas</td>
+                                <td class="py-2">Ampliar a RAM física na Loja de Hardware e verificar se os page faults caem</td>
+                            </tr>
+                            <tr class="border-b border-slate-800/60">
+                                <td class="py-2 pr-4">CPU e rede altas sem o usuário fazer nada</td>
+                                <td class="py-2 pr-4 font-mono text-[11px] text-slate-300">Gerenciador de Tarefas / CMD</td>
+                                <td class="py-2">Identificar e encerrar o processo malicioso e removê-lo da inicialização com o MSConfig</td>
+                            </tr>
+                            <tr class="border-b border-slate-800/60">
+                                <td class="py-2 pr-4">Desliga ou fica lento depois de alguns minutos</td>
+                                <td class="py-2 pr-4 font-mono text-[11px] text-slate-300">Monitor de Hardware</td>
+                                <td class="py-2">Revisar a eficiência da refrigeração e confirmar que a temperatura cai</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 pr-4">O disco está cheio e tudo fica lento</td>
+                                <td class="py-2 pr-4 font-mono text-[11px] text-slate-300">Disk Cleaner / Desfragmentador</td>
+                                <td class="py-2">Excluir temporários, desfragmentar o HDD e conferir o espaço livre</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Para docentes -->
+        <section id="docentes" class="border-t border-slate-800/80 bg-slate-900/40 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Para professores</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">O material para dar aula já vem dentro do simulador.</p>
+                <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                    <div class="rounded-2xl border border-teal-500/25 bg-teal-500/5 p-5">
+                        <i class="fa-solid fa-key text-lg text-teal-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Acesso protegido</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">O painel do professor abre com uma senha guardada em hash SHA-256, que pode ser trocada no primeiro acesso.</p>
+                    </div>
+                    <div class="rounded-2xl border border-rose-500/25 bg-rose-500/5 p-5">
+                        <i class="fa-solid fa-biohazard text-lg text-rose-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Injetor de falhas</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Durante a aula você pode provocar superaquecimento, swap, um processo pesado ou malware e ver a reação de cada grupo.</p>
+                    </div>
+                    <div class="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-5">
+                        <i class="fa-solid fa-clipboard-check text-lg text-amber-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Correção automática</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">O modo prova pontua resultados e procedimento: o que foi diagnosticado, o que foi corrigido e em que ordem.</p>
+                    </div>
+                </div>
+                <div class="mt-6 grid gap-6 lg:grid-cols-2">
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <h3 class="text-sm font-semibold text-slate-100"><i class="fa-solid fa-stopwatch mr-1.5 text-slate-500" aria-hidden="true"></i>Uma aula de 45 minutos</h3>
+                        <ol class="mt-3 list-decimal space-y-2 pl-5 text-xs leading-relaxed text-slate-400">
+                            <li>Escolha um cenário, carregue e projete a área de trabalho enquanto explica os sintomas.</li>
+                            <li>Cada grupo mede com o Monitor de Hardware e a Tabela de Páginas antes de mexer em qualquer coisa.</li>
+                            <li>Os alunos corrigem com as ferramentas e conferem o resultado pelo CMD.</li>
+                            <li>Feche com o roteiro de correção e as observações que o painel do professor registra.</li>
+                        </ol>
+                    </div>
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <h3 class="text-sm font-semibold text-slate-100"><i class="fa-solid fa-list-check mr-1.5 text-slate-500" aria-hidden="true"></i>A rubrica que a prova aplica</h3>
+                        <ul class="mt-3 list-disc space-y-2 pl-5 text-xs leading-relaxed text-slate-400">
+                            <li>Resultados: malware removido, RAM suficiente, temperatura e disco na faixa, rede funcionando.</li>
+                            <li>Procedimento: usar as ferramentas certas e nunca desfragmentar um SSD.</li>
+                            <li>Ordem: diagnosticar antes de corrigir e verificar depois de cada mudança.</li>
+                            <li>Trabalho em grupo: até 8 alunos por equipe, com curso e turma no relatório.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Empezar -->
+        <section id="empezar" class="border-t border-slate-800/80 bg-slate-950 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Começar em um minuto</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">Sem cadastro, sem instalação e sem depender da conexão da sala.</p>
+                <ol class="mt-8 grid gap-4 sm:grid-cols-3">
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/15 text-xs font-bold text-teal-300">1</span>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Abra o simulador</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Abre no navegador e pronto: sem contas e sem downloads.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/15 text-xs font-bold text-teal-300">2</span>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Escolha um cenário</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">O cenário 1 já vem carregado ao iniciar; os outros são escolhidos no painel da missão.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/15 text-xs font-bold text-teal-300">3</span>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Salve seu trabalho</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">O progresso fica no navegador e o relatório da prova é exportado em PDF, CSV ou TXT.</p>
+                    </li>
+                </ol>
+                <div class="mt-8 flex flex-wrap items-center gap-3">
+                    <a href="../index.html?lang=pt"
+                        class="inline-flex items-center gap-2 rounded-xl bg-teal-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5 hover:bg-teal-300">
+                        <i class="fa-solid fa-play" aria-hidden="true"></i>Abrir simulador
+                    </a>
+                    <span class="text-[11px] text-slate-500">Roda no navegador e também abrindo o arquivo de uma pasta ou de um pendrive, sem servidor e sem conexão.</span>
+                </div>
+                <div class="mt-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                    <h3 class="text-sm font-semibold text-slate-100"><i class="fa-solid fa-terminal mr-1.5 text-slate-500" aria-hidden="true"></i>Console para praticar</h3>
+                    <p class="mt-2 text-xs leading-relaxed text-slate-400">O CMD do simulador entende os comandos usados em uma assistência técnica real:</p>
+                    <p class="mt-3 overflow-x-auto rounded-lg border border-slate-800 bg-slate-950 p-3 font-mono text-[11px] text-teal-300">help · tasklist · taskkill /PID 666 · mem · systeminfo · defrag · ipconfig · netfix · coolfix</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Apoyar el proyecto: licencia, donación y derechos -->
+        <section id="apoyar" class="border-t border-slate-800/80 bg-slate-900/40 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Apoiar o projeto</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">O simulador é gratuito e sem publicidade. Se ele ajuda nas suas aulas, estas são as formas de retribuir.</p>
+
+                <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <i class="fa-solid fa-share-nodes text-lg text-sky-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Mencione o projeto</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Conte a colegas e alunos de onde você tirou, ou compartilhe o link no seu material de aula.</p>
+                    </div>
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <i class="fa-solid fa-star text-lg text-amber-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Deixe uma estrela</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Uma estrela no GitHub ajuda outros professores a encontrá-lo.</p>
+                        <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer"
+                            class="mt-3 inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-600 hover:text-white">
+                            <i class="fa-brands fa-github" aria-hidden="true"></i>Dar uma estrela no GitHub
+                        </a>
+                    </div>
+                    <div class="rounded-2xl border border-teal-500/25 bg-teal-500/5 p-5">
+                        <i class="fa-solid fa-mug-hot text-lg text-teal-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Doação (opcional)</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Se você gosta do simulador, fica a seu critério uma menção ou doação para o autor.</p>
+                        <div class="mt-3 flex flex-col gap-2">
+                            <a href="https://cafecito.app/hmvillalba" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-md shadow-sky-500/20 transition hover:-translate-y-0.5 hover:bg-sky-400">
+                                <i class="fa-solid fa-mug-hot" aria-hidden="true"></i>Me pague um cafezinho
+                            </a>
+                            <a href="https://ko-fi.com/hugomartinvillalba" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#ff5e5b] px-3 py-2 text-xs font-semibold text-white shadow-md shadow-rose-500/20 transition hover:-translate-y-0.5 hover:bg-[#ff423e]">
+                                <i class="fa-solid fa-heart" aria-hidden="true"></i>Apoiar no Ko-fi
+                            </a>
+                        </div>
+                        <p class="mt-2 text-[10px] text-slate-500">Cafecito: Argentina e Mercado Pago · Ko-fi: internacional.</p>
+                    </div>
+                </div>
+
+                <!-- Derechos de autor: las mismas frases del "Acerca de" del simulador -->
+                <div class="mt-6 rounded-2xl border border-slate-800 bg-slate-950/60 p-6">
+                    <h3 class="text-sm font-semibold text-slate-100">
+                        <i class="fa-solid fa-scale-balanced mr-1.5 text-slate-500" aria-hidden="true"></i>Licença e direitos
+                    </h3>
+                    <p class="mt-3 text-sm font-semibold text-slate-100">© 2026 Hugo Martín Villalba</p>
+                    <p class="mt-1 text-[11px] text-slate-400">Distribuído sob a Licença MIT</p>
+                    <p class="mt-3 max-w-3xl text-[11px] leading-relaxed text-slate-500">Se você gosta do simulador, fica a seu critério uma menção ou doação para o autor.</p>
+                    <p class="mt-2 max-w-3xl text-[11px] leading-relaxed text-slate-500">O código pode ser usado, copiado, modificado e redistribuído, inclusive em aula, mantendo o aviso de copyright. É fornecido como está, sem garantias.</p>
+                    <a href="../LICENSE"
+                        class="mt-4 inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-600 hover:text-white">
+                        <i class="fa-solid fa-file-lines" aria-hidden="true"></i>Ler a licença completa
+                    </a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Código abierto / licencia -->
+        <section id="codigo" class="border-t border-slate-800/80 bg-slate-950 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Código aberto</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">O projeto é MIT: use em aula, modifique e compartilhe.</p>
+                <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <a href="../LICENSE" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 transition hover:border-slate-700 hover:bg-slate-900">
+                        <i class="fa-solid fa-scale-balanced text-lg text-teal-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Licença MIT</h3>
+                    </a>
+                    <a href="https://github.com/hmvillalba/simlabsoftware/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer"
+                        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 transition hover:border-slate-700 hover:bg-slate-900">
+                        <i class="fa-solid fa-code-pull-request text-lg text-sky-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Como colaborar</h3>
+                    </a>
+                    <a href="https://github.com/hmvillalba/simlabsoftware/issues" target="_blank" rel="noopener noreferrer"
+                        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 transition hover:border-slate-700 hover:bg-slate-900">
+                        <i class="fa-solid fa-bug text-lg text-rose-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Relatar um erro</h3>
+                    </a>
+                    <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer"
+                        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 transition hover:border-slate-700 hover:bg-slate-900">
+                        <i class="fa-solid fa-star text-lg text-amber-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Dar uma estrela no GitHub</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Uma estrela no GitHub ajuda outros professores a encontrá-lo.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-8">
+        <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <p>Feito por Hugo Martín Villalba · © 2026 Hugo Martín Villalba · Licença MIT</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300">
+                    <i class="fa-brands fa-github mr-1" aria-hidden="true"></i>Dar uma estrela no GitHub
+                </a>
+                <span class="text-slate-700" aria-hidden="true">·</span>
+                <a href="../LICENSE" class="hover:text-slate-300">Licença MIT</a>
+                <span class="text-slate-700" aria-hidden="true">·</span>
+                <a href="../index.html?lang=pt" class="hover:text-slate-300">Abrir simulador</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+

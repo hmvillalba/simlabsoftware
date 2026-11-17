@@ -1,0 +1,23 @@
+{
+  "name": "simulador-software-educativo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SimLab Software — RetroOS 3.0: simulador de diagnóstico de sistemas operativos con landing e interfaz multiidioma es/ar/en/pt/fr.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hmvillalba/simlabsoftware.git"
+  },
+  "scripts": {
+    "build": "npm run build:landing",
+    "build:landing": "npm run build:landing:css && node tools/build_landing.mjs",
+    "build:landing:css": "tailwindcss -c landing/tailwind.config.js -i src/landing.css -o assets/landing.css --minify",
+    "watch:landing:css": "tailwindcss -c landing/tailwind.config.js -i src/landing.css -o assets/landing.css --watch",
+    "check": "node tools/test_landing.mjs && node tools/test_i18n.mjs",
+    "serve": "python -m http.server 8000"
+  },
+  "devDependencies": {
+    "parse5": "^7.2.1",
+    "tailwindcss": "3.4.17"
+  }
+}

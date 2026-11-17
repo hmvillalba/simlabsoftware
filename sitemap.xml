@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://simlabsoftware.netlify.app/es/</loc>
+        <lastmod>2026-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://simlabsoftware.netlify.app/es/"/>
+        <xhtml:link rel="alternate" hreflang="es-AR" href="https://simlabsoftware.netlify.app/ar/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://simlabsoftware.netlify.app/en/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://simlabsoftware.netlify.app/pt/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://simlabsoftware.netlify.app/fr/"/>
+    </url>
+    <url>
+        <loc>https://simlabsoftware.netlify.app/ar/</loc>
+        <lastmod>2026-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://simlabsoftware.netlify.app/es/"/>
+        <xhtml:link rel="alternate" hreflang="es-AR" href="https://simlabsoftware.netlify.app/ar/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://simlabsoftware.netlify.app/en/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://simlabsoftware.netlify.app/pt/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://simlabsoftware.netlify.app/fr/"/>
+    </url>
+    <url>
+        <loc>https://simlabsoftware.netlify.app/en/</loc>
+        <lastmod>2026-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://simlabsoftware.netlify.app/es/"/>
+        <xhtml:link rel="alternate" hreflang="es-AR" href="https://simlabsoftware.netlify.app/ar/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://simlabsoftware.netlify.app/en/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://simlabsoftware.netlify.app/pt/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://simlabsoftware.netlify.app/fr/"/>
+    </url>
+    <url>
+        <loc>https://simlabsoftware.netlify.app/pt/</loc>
+        <lastmod>2026-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://simlabsoftware.netlify.app/es/"/>
+        <xhtml:link rel="alternate" hreflang="es-AR" href="https://simlabsoftware.netlify.app/ar/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://simlabsoftware.netlify.app/en/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://simlabsoftware.netlify.app/pt/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://simlabsoftware.netlify.app/fr/"/>
+    </url>
+    <url>
+        <loc>https://simlabsoftware.netlify.app/fr/</loc>
+        <lastmod>2026-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="es" href="https://simlabsoftware.netlify.app/es/"/>
+        <xhtml:link rel="alternate" hreflang="es-AR" href="https://simlabsoftware.netlify.app/ar/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://simlabsoftware.netlify.app/en/"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://simlabsoftware.netlify.app/pt/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://simlabsoftware.netlify.app/fr/"/>
+    </url>
+    <url>
+        <loc>https://simlabsoftware.netlify.app/index.html</loc>
+        <lastmod>2026-01-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+</urlset>

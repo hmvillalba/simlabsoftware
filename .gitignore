@@ -1,0 +1,15 @@
+# Dependencias del build de la landing (Tailwind CLI)
+node_modules/
+
+# Las capturas y el robots.txt/sitemap.xml se versionan a propósito: son parte
+# del sitio publicado. Solo se ignoran los temporales de las herramientas.
+.venv/
+__pycache__/
+*.log
+
+# Sistema operativo / editor
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/

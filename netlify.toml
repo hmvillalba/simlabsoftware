@@ -1,0 +1,72 @@
+# netlify.toml — despliegue del simulador + la landing multilingüe.
+#
+# El sitio se publica tal cual está el repositorio (no hay build obligatorio):
+#   /            -> redirige a /es/ (portada en español neutro, x-default)
+#   /es/ /ar/ …  -> landing generada por tools/build_landing.mjs
+#   /index.html  -> el simulador RetroOS 3.0, sin pasar por la portada
+#   /simulador   -> alias cómodo para abrir el simulador
+#
+# El simulador NO se mueve de /index.html: sus rutas (css/, js/, assets/) son
+# relativas y moverlo obligaría a reescribir decenas de referencias. Por eso la
+# portada vive en carpetas y la raíz solo redirige.
+#
+# Si compilás la landing (npm run build) el resultado queda versionado, así que
+# Netlify puede publicar sin ejecutar nada. El bloque [build] queda comentado
+# para quien prefiera dejar que Netlify compile.
+#
+# [build]
+#   command = "npm run build:landing"
+#   publish = "."
+
+publish = "."
+
+# Redirección de la raíz a la portada (302 para no cachear el salto).
+[[redirects]]
+  from = "/"
+  to = "/es/"
+  status = 302
+  force = true
+
+# Alias del simulador, con y sin barra final. Se redirige (no se reescribe)
+# porque las rutas de la app son relativas: con un rewrite, /simulador/ dejaría
+# css/… y js/… apuntando a una carpeta que no existe.
+[[redirects]]
+  from = "/simulador"
+  to = "/index.html"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/simulador/"
+  to = "/index.html"
+  status = 302
+  force = true
+
+# La plantilla y los diccionarios son fuentes, no páginas: se sirven solo los
+# index.html generados. netlify.toml no puede excluir archivos, así que se
+# resuelve con cabeceras de no-indexado para las fuentes de landing/.
+[[headers]]
+  for = "/landing/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/tools/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+# Recursos estáticos con caché larga (tienen hash en el nombre o cambian poco).
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/fontawesome/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/landing/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

@@ -1,0 +1,12 @@
+/* src/landing.css — punto de entrada del CSS de la landing.
+ *
+ * Se compila a assets/landing.css con `npm run build:landing`, usando
+ * landing/tailwind.config.js (que solo mira landing/). Así el CSS del sitio no
+ * arrastra las clases del simulador (css/win98.css) ni al revés.
+ *
+ * Se generan solo las utilidades que la plantilla usa de verdad, por eso el
+ * archivo final queda en unos pocos KB.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

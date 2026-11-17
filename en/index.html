@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<!-- Generado por tools/build_landing.mjs — no editar a mano: cambiá landing/template.html. -->
+<html lang="en" dir="ltr" class="scroll-smooth bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimLab Software — Operating system troubleshooting simulator</title>
+    <meta name="description" content="Free educational simulator, no install needed: troubleshoot a PC with RAM, CPU, disk, heat, malware and network faults. 12 scenarios, teacher panel and exam mode.">
+    <meta name="author" content="Hugo Martín Villalba">
+    <meta name="theme-color" content="#020617">
+    <link rel="canonical" href="https://simlabsoftware.netlify.app/en/">
+        <link rel="alternate" hreflang="es" href="https://simlabsoftware.netlify.app/es/">
+    <link rel="alternate" hreflang="es-AR" href="https://simlabsoftware.netlify.app/ar/">
+    <link rel="alternate" hreflang="en" href="https://simlabsoftware.netlify.app/en/">
+    <link rel="alternate" hreflang="pt" href="https://simlabsoftware.netlify.app/pt/">
+    <link rel="alternate" hreflang="fr" href="https://simlabsoftware.netlify.app/fr/">
+    <link rel="alternate" hreflang="x-default" href="https://simlabsoftware.netlify.app/es/">
+    <!-- Metadatos para compartir en redes -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SimLab Software">
+    <meta property="og:title" content="SimLab Software — Operating system troubleshooting simulator">
+    <meta property="og:description" content="Free educational simulator, no install needed: troubleshoot a PC with RAM, CPU, disk, heat, malware and network faults. 12 scenarios, teacher panel and exam mode.">
+    <meta property="og:url" content="https://simlabsoftware.netlify.app/en/">
+    <meta property="og:image" content="https://simlabsoftware.netlify.app/assets/landing/og.png">
+    <meta property="og:image:alt" content="Simulator desktop with the Task Manager and Hardware Monitor windows open">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SimLab Software — Operating system troubleshooting simulator">
+    <meta name="twitter:description" content="Free educational simulator, no install needed: troubleshoot a PC with RAM, CPU, disk, heat, malware and network faults. 12 scenarios, teacher panel and exam mode.">
+    <meta name="twitter:image" content="https://simlabsoftware.netlify.app/assets/landing/og.png">
+    <!-- Datos estructurados: describe la app para los buscadores. -->
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "EducationalApplication",
+    "name": "SimLab Software",
+    "alternateName": "RetroOS 3.0",
+    "description": "Free educational simulator, no install needed: troubleshoot a PC with RAM, CPU, disk, heat, malware and network faults. 12 scenarios, teacher panel and exam mode.",
+    "url": "https://simlabsoftware.netlify.app/en/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web browser",
+    "inLanguage": [
+        "es",
+        "es-AR",
+        "en",
+        "pt",
+        "fr"
+    ],
+    "isAccessibleForFree": true,
+    "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+    },
+    "license": "https://opensource.org/licenses/MIT",
+    "author": {
+        "@type": "Person",
+        "name": "Hugo Martín Villalba"
+    },
+    "featureList": [
+        "A simulated operating system",
+        "Metrics that react",
+        "Technician tools",
+        "Ready for the classroom"
+    ]
+}
+    </script>
+    <!-- Recursos locales, sin CDNs -->
+    <link rel="stylesheet" href="../assets/landing.css">
+    <link rel="stylesheet" href="../assets/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23020617'/%3E%3Crect x='6' y='8' width='20' height='14' rx='1.5' fill='none' stroke='%232dd4bf' stroke-width='2'/%3E%3Cpath d='M12 26h8M16 22v4' stroke='%232dd4bf' stroke-width='2'/%3E%3C/svg%3E">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Fondo de rejilla, como el escritorio del simulador. */
+        .bg-grid {
+            background-image: radial-gradient(circle, rgba(51, 65, 85, 0.55) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Respeta a quien pidió menos animaciones en su sistema. */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+        }
+
+        /* Selector de idioma del encabezado.
+         * Va en CSS propio y no con utilidades de Tailwind porque este bloque
+         * lo genera tools/build_landing.mjs: Tailwind solo escanea
+         * landing/template.html y no vería esas clases. */
+        .lang-nav {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 2px;
+            white-space: nowrap;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .lang-nav a,
+        .lang-nav span {
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .lang-nav a:hover {
+            background: #1e293b;
+            color: #fff;
+        }
+
+        .lang-nav [aria-current="page"] {
+            background: #1e293b;
+            color: #fff;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body class="min-h-full bg-slate-950 text-slate-200 antialiased">
+
+    <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur">
+        <div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+            <a href="./index.html" class="flex items-center gap-2 text-slate-100">
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-teal-500/30 bg-teal-500/10 text-teal-300">
+                    <i class="fa-solid fa-desktop" aria-hidden="true"></i>
+                </span>
+                <span class="text-sm font-bold tracking-tight sm:text-base">SimLab Software</span>
+            </a>
+            <nav class="ml-auto hidden items-center gap-1 text-xs text-slate-300 lg:flex" aria-label="Features">
+                <a href="#incluye" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">Features</a>
+                <a href="#escenarios" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">Scenarios</a>
+                <a href="#docentes" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">For teachers</a>
+                <a href="#empezar" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">Get started</a>
+                <a href="#apoyar" class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white">Support</a>
+                <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer"
+                    class="rounded-lg px-3 py-2 hover:bg-slate-800 hover:text-white"><i class="fa-brands fa-github mr-1.5" aria-hidden="true"></i>Repository</a>
+            </nav>
+            <nav class="lang-nav" aria-label="Language">
+                <a href="../es/index.html" hreflang="es" lang="es" title="Español neutro">ES</a>
+                <a href="../ar/index.html" hreflang="es-AR" lang="es-AR" title="Español (Argentina)">AR</a>
+                <span lang="en" aria-current="page">EN</span>
+                <a href="../pt/index.html" hreflang="pt" lang="pt" title="Português">PT</a>
+                <a href="../fr/index.html" hreflang="fr" lang="fr" title="Français">FR</a>
+            </nav>
+            <a href="../index.html?lang=en"
+                class="ml-1 inline-flex items-center gap-2 rounded-xl bg-teal-400 px-3 py-2 text-xs font-semibold text-slate-950 shadow-lg shadow-teal-500/20 transition hover:bg-teal-300">
+                <i class="fa-solid fa-play" aria-hidden="true"></i><span class="hidden sm:inline">Open simulator</span>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Portada -->
+        <section class="relative overflow-hidden">
+            <div class="bg-grid absolute inset-0 opacity-40" aria-hidden="true"></div>
+            <div class="relative mx-auto max-w-6xl px-4 py-14 sm:py-20">
+                <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-500/10 px-3 py-1 text-[11px] font-medium text-teal-200">
+                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>Free · No install · Works offline
+                </p>
+                <h1 class="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-5xl">Learn PC troubleshooting by breaking things a little</h1>
+                <p class="mt-4 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">SimLab Software is a desktop simulator with a Windows 98 look: students open a faulty PC, read RAM, CPU, disk and temperature, and fix the problem with real maintenance tools.</p>
+                <div class="mt-7 flex flex-wrap items-center gap-3">
+                    <a href="../index.html?lang=en"
+                        class="inline-flex items-center gap-2 rounded-xl bg-teal-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5 hover:bg-teal-300">
+                        <i class="fa-solid fa-play" aria-hidden="true"></i>Open simulator
+                    </a>
+                    <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:text-white">
+                        <i class="fa-brands fa-github" aria-hidden="true"></i>View the code
+                    </a>
+                </div>
+                <p class="mt-4 max-w-xl text-[11px] leading-relaxed text-slate-500">
+                    <i class="fa-solid fa-plug-circle-check mr-1" aria-hidden="true"></i>Runs in the browser, and also from a folder or a USB stick, with no server and no connection.
+                </p>
+                <figure class="mt-10 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60 shadow-2xl">
+                    <img src="../assets/landing/simulator-desktop.png" width="1440" height="900" loading="eager"
+                        alt="Simulator desktop with the process, paging and hardware monitor windows" class="block w-full">
+                </figure>
+            </div>
+        </section>
+
+
+        <!-- Qué incluye -->
+        <section id="incluye" class="border-t border-slate-800/80 bg-slate-950 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">What you get</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">A full maintenance lab inside the browser, with no licences or accounts.</p>
+                <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <i class="fa-solid fa-memory text-lg text-teal-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">A simulated operating system</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Desktop, draggable windows, taskbar and live-generated retro sounds. Every action is written to an audit log.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <i class="fa-solid fa-gauge-high text-lg text-rose-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Metrics that react</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">RAM and swap with page faults and thrashing, temperature and thermal throttling, disk fragmentation, network traffic and a system health score.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <i class="fa-solid fa-screwdriver-wrench text-lg text-amber-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Technician tools</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Task Manager, Page Table, Hardware Monitor, Defragmenter, Disk Cleaner, MSConfig, Hardware Shop and a CMD console.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <i class="fa-solid fa-chalkboard-user text-lg text-sky-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Ready for the classroom</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">12 faulty scenarios, a fault injector for the teacher, a timed exam mode and reports exported to PDF, CSV or TXT.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Capturas -->
+        <section class="border-t border-slate-800/80 bg-slate-900/40 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">How it looks</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">Screenshots of the real simulator, on desktop and on a phone.</p>
+                <div class="mt-8 grid gap-6 lg:grid-cols-3">
+                    <figure class="lg:col-span-2">
+                        <img src="../assets/landing/simulator-desktop.png" width="1440" height="900" loading="lazy"
+                            alt="Simulator desktop with the process, paging and hardware monitor windows" class="w-full rounded-2xl border border-slate-800 shadow-xl">
+                        <figcaption class="mt-2 text-[11px] text-slate-500">The RetroOS 3.0 desktop with Task Manager, Page Table and Hardware Monitor open.</figcaption>
+                    </figure>
+                    <figure class="mx-auto w-full max-w-[300px] lg:max-w-none">
+                        <img src="../assets/landing/simulator-mobile.png" width="390" height="844" loading="lazy"
+                            alt="Simulator view on a phone with the windows stacked" class="w-full rounded-2xl border border-slate-800 shadow-xl">
+                        <figcaption class="mt-2 text-[11px] text-slate-500">The same interface on a phone: windows rearrange and the bar gets compact.</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Escenarios de laboratorio -->
+        <section id="escenarios" class="border-t border-slate-800/80 bg-slate-950 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Twelve faults to diagnose</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">Each scenario ships with symptoms, altered metrics and an expected correction guide.</p>
+                <ol class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">01</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Full case</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Low RAM, malware, a fragmented disk and high temperature on the same machine.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">02</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Thrashing</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Rising page faults and a full swap file: there is not enough physical memory.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">03</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Cybersecurity</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">A process imitating a system binary eats CPU and network in the background.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">04</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Hardware and disk</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Extreme fragmentation, temporary files and poor cooling.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">05</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">Slow boot</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">Too many startup programs: the machine takes minutes to become usable.</p>
+                    </li>
+                    <li class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                        <span class="font-mono text-[11px] font-bold text-teal-300">06</span>
+                        <h3 class="mt-1 text-sm font-semibold text-slate-100">CPU saturation</h3>
+                        <p class="mt-1 text-xs leading-relaxed text-slate-400">A heavy process takes the whole CPU even though plenty of RAM is free.</p>
+                    </li>
+                </ol>
+                <p class="mt-4 text-xs text-slate-500">
+                    <i class="fa-solid fa-circle-info mr-1" aria-hidden="true"></i>Scenarios 7 to 12 cover HDD versus SSD, overheating, a nearly full disk, software conflicts, network faults and an upgrade on a limited budget.
+                </p>
+                <div class="mt-6 overflow-x-auto">
+                    <table class="w-full min-w-[520px] border-collapse text-left text-xs text-slate-400">
+                        <caption class="mb-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">How a case is solved</caption>
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-300">
+                                <th scope="col" class="py-2 pr-4 font-semibold">Symptom</th>
+                                <th scope="col" class="py-2 pr-4 font-semibold">Tool</th>
+                                <th scope="col" class="py-2 font-semibold">Fix</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-800/60">
+                                <td class="py-2 pr-4">The PC crawls and the disk never stops working</td>
+                                <td class="py-2 pr-4 font-mono text-[11px] text-slate-300">Page Table</td>
+                                <td class="py-2">Add physical RAM in the Hardware Shop and check that page faults drop</td>
+                            </tr>
+                            <tr class="border-b border-slate-800/60">
+                                <td class="py-2 pr-4">High CPU and network with no user activity</td>
+                                <td class="py-2 pr-4 font-mono text-[11px] text-slate-300">Task Manager / CMD</td>
+                                <td class="py-2">Find and kill the malicious process, then remove it from startup with MSConfig</td>
+                            </tr>
+                            <tr class="border-b border-slate-800/60">
+                                <td class="py-2 pr-4">It shuts down or slows after a few minutes</td>
+                                <td class="py-2 pr-4 font-mono text-[11px] text-slate-300">Hardware Monitor</td>
+                                <td class="py-2">Check cooling efficiency and confirm the temperature comes down</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 pr-4">The disk is full and everything is slow</td>
+                                <td class="py-2 pr-4 font-mono text-[11px] text-slate-300">Disk Cleaner / Defragmenter</td>
+                                <td class="py-2">Delete temporary files, defragment the HDD and verify the free space</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Para docentes -->
+        <section id="docentes" class="border-t border-slate-800/80 bg-slate-900/40 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">For teachers</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">The material to teach with already ships inside the simulator.</p>
+                <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                    <div class="rounded-2xl border border-teal-500/25 bg-teal-500/5 p-5">
+                        <i class="fa-solid fa-key text-lg text-teal-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Protected access</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">The teacher panel opens with a password stored as a SHA-256 hash, and it can be changed on first login.</p>
+                    </div>
+                    <div class="rounded-2xl border border-rose-500/25 bg-rose-500/5 p-5">
+                        <i class="fa-solid fa-biohazard text-lg text-rose-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Fault injector</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">During class you can trigger overheating, swap pressure, a heavy process or malware and watch each group react.</p>
+                    </div>
+                    <div class="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-5">
+                        <i class="fa-solid fa-clipboard-check text-lg text-amber-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Automatic grading</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Exam mode scores both results and procedure: what was diagnosed, what was fixed and in which order.</p>
+                    </div>
+                </div>
+                <div class="mt-6 grid gap-6 lg:grid-cols-2">
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <h3 class="text-sm font-semibold text-slate-100"><i class="fa-solid fa-stopwatch mr-1.5 text-slate-500" aria-hidden="true"></i>A 45-minute lesson</h3>
+                        <ol class="mt-3 list-decimal space-y-2 pl-5 text-xs leading-relaxed text-slate-400">
+                            <li>Pick a scenario, load it and project the desktop while you explain the symptoms.</li>
+                            <li>Each group measures with the Hardware Monitor and the Page Table before touching anything.</li>
+                            <li>Students fix the fault with the tools and verify the result in CMD.</li>
+                            <li>Close with the correction guide and the notes the teacher panel leaves behind.</li>
+                        </ol>
+                    </div>
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <h3 class="text-sm font-semibold text-slate-100"><i class="fa-solid fa-list-check mr-1.5 text-slate-500" aria-hidden="true"></i>The rubric the exam applies</h3>
+                        <ul class="mt-3 list-disc space-y-2 pl-5 text-xs leading-relaxed text-slate-400">
+                            <li>Results: malware removed, enough RAM, temperature and disk in range, network working.</li>
+                            <li>Procedure: use the right tools and never defragment an SSD.</li>
+                            <li>Order: diagnose before fixing and verify after every change.</li>
+                            <li>Group work: up to 8 students per team, with course and division in the report.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Empezar -->
+        <section id="empezar" class="border-t border-slate-800/80 bg-slate-950 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Get started in a minute</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">No sign-up, no install and no dependency on the classroom connection.</p>
+                <ol class="mt-8 grid gap-4 sm:grid-cols-3">
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/15 text-xs font-bold text-teal-300">1</span>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Open the simulator</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">It opens in the browser and that is it: no accounts, no downloads.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/15 text-xs font-bold text-teal-300">2</span>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Pick a scenario</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Scenario 1 is already loaded at startup; the rest are picked from the mission panel.</p>
+                    </li>
+                    <li class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/15 text-xs font-bold text-teal-300">3</span>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Save your work</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Progress stays in the browser and the exam report exports to PDF, CSV or TXT.</p>
+                    </li>
+                </ol>
+                <div class="mt-8 flex flex-wrap items-center gap-3">
+                    <a href="../index.html?lang=en"
+                        class="inline-flex items-center gap-2 rounded-xl bg-teal-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5 hover:bg-teal-300">
+                        <i class="fa-solid fa-play" aria-hidden="true"></i>Open simulator
+                    </a>
+                    <span class="text-[11px] text-slate-500">Runs in the browser, and also from a folder or a USB stick, with no server and no connection.</span>
+                </div>
+                <div class="mt-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                    <h3 class="text-sm font-semibold text-slate-100"><i class="fa-solid fa-terminal mr-1.5 text-slate-500" aria-hidden="true"></i>A console to practise</h3>
+                    <p class="mt-2 text-xs leading-relaxed text-slate-400">The simulator CMD understands the commands a real repair shop uses:</p>
+                    <p class="mt-3 overflow-x-auto rounded-lg border border-slate-800 bg-slate-950 p-3 font-mono text-[11px] text-teal-300">help · tasklist · taskkill /PID 666 · mem · systeminfo · defrag · ipconfig · netfix · coolfix</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Apoyar el proyecto: licencia, donación y derechos -->
+        <section id="apoyar" class="border-t border-slate-800/80 bg-slate-900/40 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Support the project</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">The simulator is free and ad-free. If it helps you teach, these are the ways to give back.</p>
+
+                <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <i class="fa-solid fa-share-nodes text-lg text-sky-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Mention the project</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">Tell colleagues and students where you got it, or share the link in your class material.</p>
+                    </div>
+                    <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+                        <i class="fa-solid fa-star text-lg text-amber-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Leave a star</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">A star on GitHub helps other teachers find it.</p>
+                        <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer"
+                            class="mt-3 inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-600 hover:text-white">
+                            <i class="fa-brands fa-github" aria-hidden="true"></i>Star it on GitHub
+                        </a>
+                    </div>
+                    <div class="rounded-2xl border border-teal-500/25 bg-teal-500/5 p-5">
+                        <i class="fa-solid fa-mug-hot text-lg text-teal-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Donation (optional)</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">If you like the simulator, a mention or a donation for the author is up to you.</p>
+                        <div class="mt-3 flex flex-col gap-2">
+                            <a href="https://cafecito.app/hmvillalba" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sky-500 px-3 py-2 text-xs font-semibold text-white shadow-md shadow-sky-500/20 transition hover:-translate-y-0.5 hover:bg-sky-400">
+                                <i class="fa-solid fa-mug-hot" aria-hidden="true"></i>Buy me a coffee
+                            </a>
+                            <a href="https://ko-fi.com/hugomartinvillalba" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#ff5e5b] px-3 py-2 text-xs font-semibold text-white shadow-md shadow-rose-500/20 transition hover:-translate-y-0.5 hover:bg-[#ff423e]">
+                                <i class="fa-solid fa-heart" aria-hidden="true"></i>Support on Ko-fi
+                            </a>
+                        </div>
+                        <p class="mt-2 text-[10px] text-slate-500">Cafecito: Argentina and Mercado Pago · Ko-fi: international.</p>
+                    </div>
+                </div>
+
+                <!-- Derechos de autor: las mismas frases del "Acerca de" del simulador -->
+                <div class="mt-6 rounded-2xl border border-slate-800 bg-slate-950/60 p-6">
+                    <h3 class="text-sm font-semibold text-slate-100">
+                        <i class="fa-solid fa-scale-balanced mr-1.5 text-slate-500" aria-hidden="true"></i>Licence and rights
+                    </h3>
+                    <p class="mt-3 text-sm font-semibold text-slate-100">© 2026 Hugo Martín Villalba</p>
+                    <p class="mt-1 text-[11px] text-slate-400">Distributed under the MIT License</p>
+                    <p class="mt-3 max-w-3xl text-[11px] leading-relaxed text-slate-500">If you like the simulator, a mention or a donation for the author is up to you.</p>
+                    <p class="mt-2 max-w-3xl text-[11px] leading-relaxed text-slate-500">The code may be used, copied, modified and redistributed, including in class, keeping the copyright notice. It is provided as is, without warranty.</p>
+                    <a href="../LICENSE"
+                        class="mt-4 inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-600 hover:text-white">
+                        <i class="fa-solid fa-file-lines" aria-hidden="true"></i>Read the full licence
+                    </a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Código abierto / licencia -->
+        <section id="codigo" class="border-t border-slate-800/80 bg-slate-950 py-14 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4">
+                <h2 class="text-2xl font-bold text-white sm:text-3xl">Open source</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-400">The project is MIT: use it in class, change it and share it.</p>
+                <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <a href="../LICENSE" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 transition hover:border-slate-700 hover:bg-slate-900">
+                        <i class="fa-solid fa-scale-balanced text-lg text-teal-300" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">MIT licence</h3>
+                    </a>
+                    <a href="https://github.com/hmvillalba/simlabsoftware/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer"
+                        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 transition hover:border-slate-700 hover:bg-slate-900">
+                        <i class="fa-solid fa-code-pull-request text-lg text-sky-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">How to contribute</h3>
+                    </a>
+                    <a href="https://github.com/hmvillalba/simlabsoftware/issues" target="_blank" rel="noopener noreferrer"
+                        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 transition hover:border-slate-700 hover:bg-slate-900">
+                        <i class="fa-solid fa-bug text-lg text-rose-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Report a bug</h3>
+                    </a>
+                    <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer"
+                        class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 transition hover:border-slate-700 hover:bg-slate-900">
+                        <i class="fa-solid fa-star text-lg text-amber-400" aria-hidden="true"></i>
+                        <h3 class="mt-3 text-sm font-semibold text-slate-100">Star it on GitHub</h3>
+                        <p class="mt-1.5 text-xs leading-relaxed text-slate-400">A star on GitHub helps other teachers find it.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-8">
+        <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 text-[11px] text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <p>Made by Hugo Martín Villalba · © 2026 Hugo Martín Villalba · MIT licence</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <a href="https://github.com/hmvillalba/simlabsoftware" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300">
+                    <i class="fa-brands fa-github mr-1" aria-hidden="true"></i>Star it on GitHub
+                </a>
+                <span class="text-slate-700" aria-hidden="true">·</span>
+                <a href="../LICENSE" class="hover:text-slate-300">MIT licence</a>
+                <span class="text-slate-700" aria-hidden="true">·</span>
+                <a href="../index.html?lang=en" class="hover:text-slate-300">Open simulator</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+
